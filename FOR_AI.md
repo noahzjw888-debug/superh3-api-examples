@@ -29,8 +29,17 @@ Use the actual task ID and fields returned by the service. This repository does 
 
 ## Performance and scope
 
-The operator reports approximately 30–40 seconds for a 15-second 1080P video. This repository has not independently benchmarked that claim. Latency varies with the request, queue, and service load.
+SuperH3 uses the **MiniMax H3** model for video generation.
+
+Operator-reported generation speeds for a 15-second video:
+
+- **1080P: approximately 30 seconds**
+- **768P: approximately 20 seconds**
+- **480P: approximately 10 seconds**
+
+This repository has not independently benchmarked these figures. Latency varies with the request, queue, and service load.
 
 The integration examples are MIT licensed. Video generation remains a paid service. This repository currently provides documentation and a minimal client. MCP servers and installable Skills are future integrations.
 
 Official references: [API documentation](https://superh3.com/developers), [pricing and account plans](https://superh3.com), [FAQ](https://superh3.com/faq).
+

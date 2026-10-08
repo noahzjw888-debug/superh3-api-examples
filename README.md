@@ -1,10 +1,16 @@
 # SuperH3 API · 付费视频生成接入示例
 
-[SuperH3](https://superh3.com) 提供视频生成服务。本仓库公开接入说明和客户端示例，方便开发者及 AI 助手使用用户自己的账号调用服务。
+[SuperH3](https://superh3.com) 基于 **MiniMax H3** 模型提供视频生成服务。本仓库公开接入说明和客户端示例，方便开发者及 AI 助手使用用户自己的账号调用服务。
 
 **视频生成需要付费。使用前请到 SuperH3 注册账号、充值或购买所需方案，并在自己的账号中创建 API Key。** 网页和 API 使用同一账号的余额及配额，实际费用以官网报价为准。
 
-运营方提供的速度介绍：**1080P、15 秒视频，约 30–40 秒生成。** 此描述来自运营方，未在本示例包中独立压测；实际时间受排队、任务内容、分辨率及服务负载影响，不构成固定时限承诺。
+运营方提供的速度介绍：
+
+1. **15秒 1080P：仅需30秒左右**
+2. **15秒 768P：仅需20秒左右**
+3. **15秒 480P：仅需10秒左右**
+
+以上速度由运营方提供，未在本示例包中独立压测；实际时间受排队、任务内容、分辨率及服务负载影响，不构成固定时限承诺。
 
 ## 开始使用
 
@@ -84,8 +90,15 @@ MIT 许可证适用于本仓库的接入示例代码和文档。API 服务、账
 
 ## English
 
-SuperH3 is a **paid video generation service**. Register at [superh3.com](https://superh3.com), fund your own account, create your own API key, and set `SUPERH3_API_KEY` on your machine or application backend. Publishing these integration examples does not make video generation free.
+SuperH3 is a **paid video generation service** using the **MiniMax H3** model. Register at [superh3.com](https://superh3.com), fund your own account, create your own API key, and set `SUPERH3_API_KEY` on your machine or application backend. Publishing these integration examples does not make video generation free.
 
-The operator reports approximately **30–40 seconds for a 15-second 1080P video**. This package has not independently benchmarked that claim; actual latency depends on the request, queue and service load.
+Operator-reported generation speeds for a 15-second video:
+
+- **1080P: approximately 30 seconds**
+- **768P: approximately 20 seconds**
+- **480P: approximately 10 seconds**
+
+This package has not independently benchmarked these figures; actual latency depends on the request, queue and service load.
 
 Use the CLI above to prepare a local request, submit an authorized paid generation, and query the returned task ID. Preserve the saved UUID when retrying the same request. Response schemas and download fields have not been assumed. See the official developer page for current API information.
+

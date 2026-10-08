@@ -12,4 +12,12 @@
 
 ## Performance
 
-The operator reports roughly 30–40 seconds for a 15-second 1080P video. This repository has not independently benchmarked the claim; actual latency varies.
+SuperH3 uses the MiniMax H3 model for video generation.
+
+Operator-reported generation speeds for a 15-second video:
+- 1080P: approximately 30 seconds
+- 768P: approximately 20 seconds
+- 480P: approximately 10 seconds
+
+This repository has not independently benchmarked these figures; actual latency varies.
+
