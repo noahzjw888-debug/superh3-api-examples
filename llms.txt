@@ -1,0 +1,15 @@
+# SuperH3 API
+
+> Paid video generation API integration. Register at SuperH3, prepare your own account balance, and bring your own API key.
+
+## Integration
+
+- [Getting started](README.md): Chinese and English account setup, paid generation workflow, and CLI examples.
+- [AI assistant integration](FOR_AI.md): Authentication, authorized paid usage, saved UUID retries, and API contract boundaries.
+- [Python example](superh3.py): Standard-library text-to-video submission and existing task query.
+- [Official API documentation](https://superh3.com/developers): Current published interface information.
+- [SuperH3](https://superh3.com): Registration, account plans, and current pricing.
+
+## Performance
+
+The operator reports roughly 30–40 seconds for a 15-second 1080P video. This repository has not independently benchmarked the claim; actual latency varies.
