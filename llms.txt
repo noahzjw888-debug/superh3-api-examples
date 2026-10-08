@@ -1,23 +1,27 @@
 # SuperH3 API
 
-> Paid video generation API integration. Register at SuperH3, prepare your own account balance, and bring your own API key.
+> 基于 MiniMax H3 模型的付费视频生成 API。用户自行注册、充值并创建自己的 API Key。
+> Paid video generation API using the MiniMax H3 model. Register at SuperH3, fund your own account, and create your own API key.
 
-## Integration
+## 接入文档 / Integration
 
-- [Getting started](README.md): Chinese and English account setup, paid generation workflow, and CLI examples.
-- [AI assistant integration](FOR_AI.md): Authentication, authorized paid usage, saved UUID retries, and API contract boundaries.
-- [Python example](superh3.py): Standard-library text-to-video submission and existing task query.
-- [Official API documentation](https://superh3.com/developers): Current published interface information.
-- [SuperH3](https://superh3.com): Registration, account plans, and current pricing.
+- [开始使用 / Getting started](README.md): 中英文账号设置、付费生成流程和 CLI 示例 / Bilingual account setup, paid generation workflow, and CLI examples.
+- [AI 助手接入 / AI assistant integration](FOR_AI.md): 中英文鉴权说明、付费授权、UUID 重试及 API 合约边界 / Bilingual authentication, paid authorization, saved UUID retries, and API contract boundaries.
+- [Python 示例 / Python example](superh3.py): 标准库文生视频提交与任务查询 / Standard-library text-to-video submission and existing task queries.
+- [官方 API 文档 / Official API documentation](https://superh3.com/developers): 当前公开接口说明 / Current published interface information.
+- [SuperH3](https://superh3.com): 注册、账号方案及当前价格 / Registration, account plans, and current pricing.
 
-## Performance
+## 模型与速度 / Model and speed
 
+SuperH3 网站使用 MiniMax H3 模型提供视频生成服务。
 SuperH3 uses the MiniMax H3 model for video generation.
 
-Operator-reported generation speeds for a 15-second video:
-- 1080P: approximately 30 seconds
-- 768P: approximately 20 seconds
-- 480P: approximately 10 seconds
+运营方提供的 15 秒视频生成速度 / Operator-reported generation speeds for a 15-second video:
 
-This repository has not independently benchmarked these figures; actual latency varies.
+- 15秒 1080P：仅需30秒左右 / 15s 1080P: around 30 seconds
+- 15秒 768P：仅需20秒左右 / 15s 768P: around 20 seconds
+- 15秒 480P：仅需10秒左右 / 15s 480P: around 10 seconds
+
+本仓库未独立压测上述速度，实际耗时因任务内容、排队及服务负载而异。
+These timings have not been independently benchmarked here; actual latency depends on the request, queue and service load.
 
