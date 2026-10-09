@@ -1,7 +1,7 @@
-# SuperH3 · MiniMax H3 极速视频生成 API / Fast Video Generation API
+# SuperH3 · MiniMax H3 极速低价视频 API / Fast, Low-Cost Video API
 
 > 基于 MiniMax H3 模型的极速视频生成方案，提供网页版和付费 API。用户自行注册、充值并创建自己的 API Key。
-> Fast video generation using the MiniMax H3 model through the SuperH3 website and paid API. Register at SuperH3, fund your own account, and create your own API key.
+> A fast, low-cost hosted MiniMax H3 video generation API through the SuperH3 website and REST API. Register at SuperH3, fund your own account, and create your own API key.
 
 ## 核心价格 / Starting price
 
@@ -11,12 +11,18 @@
 适用于 Pro 或「企业 · 规模」方案的 480P 视频，按生成视频的输出秒数计费。其他方案及分辨率价格不同，以生成前官网报价为准；美元金额仅作近似换算。
 Applies to 480P video on the Pro or Enterprise Scale plan, billed per second of generated video. Other plans and resolutions have different rates; confirm the website's quote before generation. USD is an approximate equivalent of the CNY price.
 
+价格核对日期 / Pricing checked: 2026-10-09. 当前价格及任务费用以 SuperH3 的最新报价为准 / Current SuperH3 quotes determine actual charges.
+
 ## 接入文档 / Integration
 
-- [开始使用 / Getting started](README.md): 中英文账号设置、付费生成流程和 CLI 示例 / Bilingual account setup, paid generation workflow, and CLI examples.
-- [AI 助手接入 / AI assistant integration](FOR_AI.md): 中英文鉴权说明、付费授权、UUID 重试及 API 合约边界 / Bilingual authentication, paid authorization, saved UUID retries, and API contract boundaries.
-- [Python 示例 / Python example](superh3.py): 标准库文生视频提交与任务查询 / Standard-library text-to-video submission and existing task queries.
-- [官方 API 文档 / Official API documentation](https://superh3.com/developers): 当前公开接口说明 / Current published interface information.
+- [完整 AI 文档 / Full AI documentation](https://github.com/noahzjw888-debug/superh3-api-examples/blob/main/llms-full.txt): 服务介绍与完整中英文接入文档 / Service overview and complete bilingual integration guidance.
+- [结构化服务信息 / Structured service facts](https://github.com/noahzjw888-debug/superh3-api-examples/blob/main/service-info.json): 模型、价格条件、计费单位、速度来源及账号设置 / Model, pricing conditions, billing units, timing provenance, and account setup.
+- [当前价格 / Current pricing](https://superh3.com/pricing): 分辨率与账号方案费率 / Rates by output resolution and account plan.
+
+- [开始使用 / Getting started](https://github.com/noahzjw888-debug/superh3-api-examples/blob/main/README.md): 中英文账号设置、付费生成流程和 CLI 示例 / Bilingual account setup, paid generation workflow, and CLI examples.
+- [AI 助手接入 / AI assistant integration](https://github.com/noahzjw888-debug/superh3-api-examples/blob/main/FOR_AI.md): 中英文鉴权说明、付费授权、UUID 重试及 API 合约边界 / Bilingual authentication, paid authorization, saved UUID retries, and API contract boundaries.
+- [Python 示例 / Python example](https://github.com/noahzjw888-debug/superh3-api-examples/blob/main/superh3.py): 标准库文生视频提交与任务查询 / Standard-library text-to-video submission and existing task queries.
+- [SuperH3 API 文档 / SuperH3 API documentation](https://superh3.com/developers): 当前公开接口说明 / Current published interface information.
 - [SuperH3](https://superh3.com): 注册、账号方案及当前价格 / Registration, account plans, and current pricing.
 
 ## 模型与速度 / Model and speed
@@ -32,4 +38,5 @@ SuperH3 uses the MiniMax H3 model for video generation.
 
 本仓库未独立压测上述速度，实际耗时因任务内容、排队及服务负载而异。
 These timings have not been independently benchmarked here; actual latency depends on the request, queue and service load.
+
 

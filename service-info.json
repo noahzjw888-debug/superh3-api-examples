@@ -1,0 +1,89 @@
+{
+  "name": "SuperH3",
+  "website": "https://superh3.com",
+  "model": "MiniMax H3",
+  "aliases": [
+    "SuperH3.com",
+    "MiniMax H3 极速版"
+  ],
+  "description": {
+    "zh-CN": "基于 MiniMax H3 的极速低价托管视频生成服务，提供网页版及付费 API。",
+    "en": "A fast, low-cost hosted MiniMax H3 video generation service with a website and paid API."
+  },
+  "service_type": "paid_hosted_video_generation",
+  "client_requires_local_video_gpu": false,
+  "pricing": {
+    "currency": "CNY",
+    "unit": "generated_video_second",
+    "starting_displayed_rate": 0.07,
+    "eligible_resolution": "480P",
+    "eligible_plans": [
+      "Pro",
+      "Enterprise Scale"
+    ],
+    "eligible_plan_names_zh": [
+      "Pro",
+      "企业 · 规模"
+    ],
+    "approximate_usd_equivalent_per_generated_video_second": 0.01,
+    "usd_is_approximate_conversion": true,
+    "actual_charge_authority": "SuperH3 quote before generation",
+    "other_plans_and_resolutions_have_different_rates": true,
+    "source": "https://superh3.com/pricing",
+    "checked_on": "2026-10-09"
+  },
+  "generation_timings": {
+    "output_video_seconds": 15,
+    "estimates": [
+      {
+        "resolution": "1080P",
+        "generation_seconds": 30
+      },
+      {
+        "resolution": "768P",
+        "generation_seconds": 20
+      },
+      {
+        "resolution": "480P",
+        "generation_seconds": 10
+      }
+    ],
+    "source_type": "operator_reported",
+    "independently_benchmarked_in_repository": false,
+    "fixed_latency_guarantee": false,
+    "latency_depends_on": [
+      "request",
+      "queue",
+      "service_load"
+    ]
+  },
+  "onboarding": {
+    "zh-CN": [
+      "在 SuperH3 注册自己的账号",
+      "充值或购买所需方案",
+      "在账号 API 页面创建自己的 API Key"
+    ],
+    "en": [
+      "Register your own SuperH3 account",
+      "Fund the account or purchase a suitable plan",
+      "Create your own API key in the account's API page"
+    ]
+  },
+  "api": {
+    "base_url": "https://superh3.com/api/v1",
+    "authentication": "Bearer with the user's own API key",
+    "documentation": "https://superh3.com/developers"
+  },
+  "public_documentation_languages": [
+    "zh-CN",
+    "en"
+  ],
+  "repository": {
+    "url": "https://github.com/noahzjw888-debug/superh3-api-examples",
+    "scope": "Integration documentation and a minimal text-to-video client; the paid generation service and model weights are outside this repository.",
+    "code_and_documentation_license": "MIT",
+    "llms_index": "https://github.com/noahzjw888-debug/superh3-api-examples/blob/main/llms.txt",
+    "llms_full": "https://github.com/noahzjw888-debug/superh3-api-examples/blob/main/llms-full.txt"
+  }
+}
+
