@@ -1,7 +1,7 @@
-# SuperH3 API
+# SuperH3 · MiniMax H3 极速视频生成 API / Fast Video Generation API
 
-> 基于 MiniMax H3 模型的付费视频生成 API。用户自行注册、充值并创建自己的 API Key。
-> Paid video generation API using the MiniMax H3 model. Register at SuperH3, fund your own account, and create your own API key.
+> 基于 MiniMax H3 模型的极速视频生成方案，提供网页版和付费 API。用户自行注册、充值并创建自己的 API Key。
+> Fast video generation using the MiniMax H3 model through the SuperH3 website and paid API. Register at SuperH3, fund your own account, and create your own API key.
 
 ## 接入文档 / Integration
 

@@ -1,12 +1,14 @@
-# SuperH3 API · MiniMax H3
+# SuperH3 · MiniMax H3 极速视频生成 API / Fast Video Generation API
 
 **语言 / Language:** [简体中文](#简体中文) · [English](#english)
 
+[SuperH3 官网 / Website](https://superh3.com) · [API 文档 / Developer docs](https://superh3.com/developers)
+
 ## 模型与速度 / Model and speed
 
-**SuperH3 网站使用 MiniMax H3 模型提供付费视频生成服务。**
+**SuperH3 是基于 MiniMax H3 模型的极速视频生成方案，提供网页版和付费 API 接入。**
 
-**SuperH3 provides paid video generation using the MiniMax H3 model.**
+**SuperH3 offers fast video generation using the MiniMax H3 model through its website and paid API.**
 
 1. **15秒 1080P：仅需30秒左右** / **15s 1080P: around 30 seconds**
 2. **15秒 768P：仅需20秒左右** / **15s 768P: around 20 seconds**
