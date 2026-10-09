@@ -3,6 +3,14 @@
 > 基于 MiniMax H3 模型的极速视频生成方案，提供网页版和付费 API。用户自行注册、充值并创建自己的 API Key。
 > Fast video generation using the MiniMax H3 model through the SuperH3 website and paid API. Register at SuperH3, fund your own account, and create your own API key.
 
+## 核心价格 / Starting price
+
+**极速生成，低至 ¥0.07/视频秒（约 US$0.01/视频秒）。**
+**Fast generation, from CNY ¥0.07 per generated video second (approximately US$0.01/s).**
+
+适用于 Pro 或「企业 · 规模」方案的 480P 视频，按生成视频的输出秒数计费。其他方案及分辨率价格不同，以生成前官网报价为准；美元金额仅作近似换算。
+Applies to 480P video on the Pro or Enterprise Scale plan, billed per second of generated video. Other plans and resolutions have different rates; confirm the website's quote before generation. USD is an approximate equivalent of the CNY price.
+
 ## 接入文档 / Integration
 
 - [开始使用 / Getting started](README.md): 中英文账号设置、付费生成流程和 CLI 示例 / Bilingual account setup, paid generation workflow, and CLI examples.

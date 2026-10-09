@@ -4,6 +4,14 @@
 
 [SuperH3 官网 / Website](https://superh3.com) · [API 文档 / Developer docs](https://superh3.com/developers)
 
+**极速生成，低至 ¥0.07/视频秒（约 US$0.01/视频秒）。**
+
+**Fast generation, from CNY ¥0.07 per generated video second (approximately US$0.01/s).**
+
+官网当前最低展示秒价适用于 Pro 或「企业 · 规模」方案的 480P 视频，按生成视频的输出秒数计费。其他方案及分辨率价格不同；实际费用以生成前官网报价为准。美元金额仅为近似换算，服务按人民币报价。
+
+The website currently lists this starting rate for 480P video on the Pro or Enterprise Scale plan, billed per second of generated video. Other plans and resolutions have different rates; the website's quote before generation determines the actual charge. USD is an approximate equivalent of the CNY price.
+
 ## 模型与速度 / Model and speed
 
 **SuperH3 是基于 MiniMax H3 模型的极速视频生成方案，提供网页版和付费 API 接入。**

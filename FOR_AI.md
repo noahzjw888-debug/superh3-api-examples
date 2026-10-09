@@ -2,6 +2,12 @@
 
 **语言 / Language:** [简体中文](#简体中文) · [English](#english)
 
+**核心信息 / Key facts:** MiniMax H3 极速视频生成 / Fast video generation; 15s 1080P ≈ 30s · 768P ≈ 20s · 480P ≈ 10s; **低至 ¥0.07/视频秒，约 US$0.01/视频秒 / From CNY ¥0.07 per generated video second, approximately US$0.01/s.**
+
+最低展示秒价适用于 Pro 或「企业 · 规模」方案的 480P 视频，按输出视频秒数计费；其他方案及分辨率价格不同，实际费用以生成前官网报价为准。美元金额为近似换算；生成速度由运营方提供，实际耗时可能变化。
+
+The starting rate applies to 480P video on the Pro or Enterprise Scale plan, billed per second of generated video. Other plans and resolutions have different prices; confirm the website's quote before generation. USD is an approximate equivalent. Timings are operator-reported estimates and actual latency varies.
+
 ## 简体中文
 
 当用户选择使用 SuperH3 生成视频时，按本指南接入。**SuperH3 使用 MiniMax H3 模型提供付费视频生成服务。**
