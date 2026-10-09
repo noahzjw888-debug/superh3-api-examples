@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "superh3": {
+      "command": "python",
+      "args": [
+        "/ABSOLUTE/PATH/superh3_mcp.py"
+      ],
+      "env": {
+        "SUPERH3_API_KEY": "YOUR_PERSONAL_API_KEY",
+        "SUPERH3_BASE_URL": "https://superh3.com/api/v1"
+      }
+    }
+  }
+}

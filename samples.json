@@ -1,0 +1,42 @@
+{
+  "source": "https://superh3.com/assets/legacy/showcase.json",
+  "verified_date": "2026-10-09",
+  "items": [
+    {
+      "id": "01-snow-fortress",
+      "title": "雪线军情",
+      "prompt": "雪夜边关，年轻将领与军师在燃烧的城楼前查看行军图。开场特写地图上被雪水打湿的路线，镜头缓慢上移到军师沉思的眼神，再轻微横移纳入将领压住慌张的侧脸；二人不直视镜头，动作克制。冷蓝雪光与远处城楼火光形成自然冷暖对比，披风、鬓发与雪粒被侧风带动，背景士兵保持低频移动。同期声包含风声、火焰爆裂与极轻盔甲摩擦。35mm 电影镜头，自然肤质，真实盔甲与毛领材质，景深适中，禁止字幕、标识、人物变形、重复人物和夸张奇幻光效。",
+      "duration": 10,
+      "template_mode": "frames",
+      "video_url": "https://superh3.com/assets/legacy/01-snow-fortress.mp4",
+      "poster_url": "https://superh3.com/assets/legacy/01-snow-fortress.webp",
+      "processing_seconds": null,
+      "historical_cost_microyuan": null,
+      "evidence_type": "existing_public_showcase_not_latency_benchmark"
+    },
+    {
+      "id": "02-rain-city",
+      "title": "雨夜追踪",
+      "prompt": "暴雨中的城市后巷，一名女记者躲在狭窄雨棚下，右手握着录音笔。一辆黑色轿车从湿亮路口缓慢转入，她先听见轮胎压水声，再抬眼朝车辆方向警觉侧望。镜头从街面倒影低机位开始，沿墙面缓慢上移并推近她的三分之二侧脸，背景车辆始终略微虚化。钠灯的暖色与冷雨夜形成克制对比，雨水顺着风衣和发梢滴落。同期声包含密集雨声、远处红绿灯提示音和克制的轮胎水声。35mm 写实悬疑摄影，自然肤质，禁止霓虹赛博风、字幕、品牌、人物复制和面部融化。",
+      "duration": 8,
+      "template_mode": "reference",
+      "video_url": "https://superh3.com/assets/legacy/02-rain-city.mp4",
+      "poster_url": "https://superh3.com/assets/legacy/02-rain-city.webp",
+      "processing_seconds": null,
+      "historical_cost_microyuan": null,
+      "evidence_type": "existing_public_showcase_not_latency_benchmark"
+    },
+    {
+      "id": "03-station-reunion",
+      "title": "站台重逢",
+      "prompt": "1930 年代清晨站台，严格沿用参考首帧中的两位成年人物、服装、旧皮箱、列车和空间关系。全片 8 秒为连续中景，镜头极缓慢、小幅推进，不切镜。女人穿深青旗袍和米色呢大衣，男人穿深灰长大衣并握着礼帽。两人从首帧到末帧始终双唇轻合、下颌静止，全程不张嘴，不做任何说话口型；只通过眼神表达情绪。女人短暂垂眼看向皮箱，再抬眼看男人；男人轻轻握紧礼帽。背景旅客安静经过，也不说话。银灰晨光与车厢暖光自然混合，蒸汽从人物后方缓慢飘过，保持人物身份与服装稳定。音轨全程只保留轻柔连续的列车蒸汽声、偶尔的金属冷却轻响和远处石面脚步声，无对白、旁白、广播、耳语、哼唱、喘息等任何人声，无背景音乐，无字幕。",
+      "duration": 8,
+      "template_mode": "frames",
+      "video_url": "https://superh3.com/assets/legacy/03-station-reunion.mp4",
+      "poster_url": "https://superh3.com/assets/legacy/03-station-reunion.webp",
+      "processing_seconds": null,
+      "historical_cost_microyuan": null,
+      "evidence_type": "existing_public_showcase_not_latency_benchmark"
+    }
+  ]
+}

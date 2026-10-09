@@ -1,0 +1,1105 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SuperH3 MiniMax H3 Video API",
+    "version": "2.0.0",
+    "description": "Agent integration subset of existing REST API. Own account/key. Prices use integer microyuan. See developers for full media limits."
+  },
+  "servers": [
+    {
+      "url": "https://superh3.com/api/v1"
+    }
+  ],
+  "security": [
+    {
+      "personalKey": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "personalKey": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "paths": {
+    "/catalog": {
+      "get": {
+        "summary": "Public live tier prices; rates are microyuan per output second",
+        "operationId": "get_catalog",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error; do not create replacement tasks on ambiguous submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retry_after": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/config": {
+      "get": {
+        "summary": "Public current capability flags; true does not guarantee available capacity",
+        "operationId": "get_config",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error; do not create replacement tasks on ambiguous submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retry_after": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/me": {
+      "get": {
+        "summary": "Account, available/held microyuan, tier and concurrency",
+        "operationId": "get_me",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error; do not create replacement tasks on ambiguous submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retry_after": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quotes/estimate": {
+      "post": {
+        "summary": "Real account price preview; no consent, quote token, hold or task",
+        "operationId": "post_quotes_estimate",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "cost",
+                    "currency",
+                    "card_uses",
+                    "generation_mode"
+                  ],
+                  "properties": {
+                    "cost": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Integer microyuan; 1 CNY = 1000000 microyuan"
+                    },
+                    "currency": {
+                      "type": "string",
+                      "enum": [
+                        "CNY"
+                      ]
+                    },
+                    "card_uses": {
+                      "type": "integer",
+                      "enum": [
+                        0,
+                        1
+                      ]
+                    },
+                    "generation_mode": {
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "simulation",
+                        "mixed",
+                        "unavailable"
+                      ]
+                    },
+                    "quote_token": {
+                      "type": "string",
+                      "description": "Formal quote only; never returned by /quotes/estimate"
+                    },
+                    "estimate_only": {
+                      "type": "boolean"
+                    },
+                    "allocations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error; do not create replacement tasks on ambiguous submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retry_after": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "mode",
+                  "resolution",
+                  "seconds"
+                ],
+                "properties": {
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "text",
+                      "image",
+                      "frames",
+                      "reference"
+                    ]
+                  },
+                  "resolution": {
+                    "type": "string",
+                    "enum": [
+                      "480",
+                      "768",
+                      "1080"
+                    ]
+                  },
+                  "seconds": {
+                    "type": "integer",
+                    "minimum": 5,
+                    "maximum": 15
+                  },
+                  "card_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quotes": {
+      "post": {
+        "summary": "Formal quote after consent; still no hold or task",
+        "operationId": "post_quotes",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "cost",
+                    "currency",
+                    "card_uses",
+                    "generation_mode"
+                  ],
+                  "properties": {
+                    "cost": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Integer microyuan; 1 CNY = 1000000 microyuan"
+                    },
+                    "currency": {
+                      "type": "string",
+                      "enum": [
+                        "CNY"
+                      ]
+                    },
+                    "card_uses": {
+                      "type": "integer",
+                      "enum": [
+                        0,
+                        1
+                      ]
+                    },
+                    "generation_mode": {
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "simulation",
+                        "mixed",
+                        "unavailable"
+                      ]
+                    },
+                    "quote_token": {
+                      "type": "string",
+                      "description": "Formal quote only; never returned by /quotes/estimate"
+                    },
+                    "estimate_only": {
+                      "type": "boolean"
+                    },
+                    "allocations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error; do not create replacement tasks on ambiguous submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retry_after": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "text",
+                      "image",
+                      "frames",
+                      "reference"
+                    ]
+                  },
+                  "prompt": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 7000
+                  },
+                  "resolution": {
+                    "type": "string",
+                    "enum": [
+                      "480",
+                      "768",
+                      "1080"
+                    ]
+                  },
+                  "seconds": {
+                    "type": "integer",
+                    "minimum": 5,
+                    "maximum": 15
+                  },
+                  "aspect": {
+                    "type": "string",
+                    "enum": [
+                      "adaptive",
+                      "21:9",
+                      "16:9",
+                      "4:3",
+                      "1:1",
+                      "3:4",
+                      "9:16"
+                    ]
+                  },
+                  "first_frame": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "last_frame": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "references": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "maxItems": 12
+                  },
+                  "project_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "card_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "accepted_policy": {
+                    "type": "boolean",
+                    "const": true
+                  },
+                  "idempotency_key": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "quote_token": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "mode",
+                  "prompt",
+                  "resolution",
+                  "seconds",
+                  "aspect",
+                  "accepted_policy"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/generations": {
+      "post": {
+        "summary": "Paid submission; freezes quoted funds, settles on confirmed success; persist UUID before request",
+        "operationId": "post_generations",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "state": {
+                            "type": "string",
+                            "enum": [
+                              "queued",
+                              "preparing",
+                              "submit_intent",
+                              "processing",
+                              "submission_unknown",
+                              "completed",
+                              "failed",
+                              "cancelled"
+                            ]
+                          },
+                          "cost": {
+                            "type": "integer"
+                          },
+                          "result_asset_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "result_available": {
+                            "type": "boolean"
+                          },
+                          "local_test": {
+                            "type": "boolean"
+                          },
+                          "error_code": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "created_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "first_prepare_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "intent_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "started_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "finished_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "result_expires_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error; do not create replacement tasks on ambiguous submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retry_after": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "text",
+                      "image",
+                      "frames",
+                      "reference"
+                    ]
+                  },
+                  "prompt": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 7000
+                  },
+                  "resolution": {
+                    "type": "string",
+                    "enum": [
+                      "480",
+                      "768",
+                      "1080"
+                    ]
+                  },
+                  "seconds": {
+                    "type": "integer",
+                    "minimum": 5,
+                    "maximum": 15
+                  },
+                  "aspect": {
+                    "type": "string",
+                    "enum": [
+                      "adaptive",
+                      "21:9",
+                      "16:9",
+                      "4:3",
+                      "1:1",
+                      "3:4",
+                      "9:16"
+                    ]
+                  },
+                  "first_frame": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "last_frame": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "references": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "maxItems": 12
+                  },
+                  "project_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "card_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "accepted_policy": {
+                    "type": "boolean",
+                    "const": true
+                  },
+                  "idempotency_key": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "quote_token": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "mode",
+                  "prompt",
+                  "resolution",
+                  "seconds",
+                  "aspect",
+                  "accepted_policy",
+                  "idempotency_key",
+                  "quote_token"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/generations/{id}": {
+      "get": {
+        "summary": "Read original task; completed is required before download",
+        "operationId": "get_generations_id",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "state": {
+                            "type": "string",
+                            "enum": [
+                              "queued",
+                              "preparing",
+                              "submit_intent",
+                              "processing",
+                              "submission_unknown",
+                              "completed",
+                              "failed",
+                              "cancelled"
+                            ]
+                          },
+                          "cost": {
+                            "type": "integer"
+                          },
+                          "result_asset_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "result_available": {
+                            "type": "boolean"
+                          },
+                          "local_test": {
+                            "type": "boolean"
+                          },
+                          "error_code": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "created_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "first_prepare_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "intent_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "started_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "finished_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "result_expires_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error; do not create replacement tasks on ambiguous submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retry_after": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/assets/{id}/file": {
+      "get": {
+        "summary": "Authenticated result download; result may expire; redirects must not receive Bearer key",
+        "operationId": "get_assets_id_file",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "video/mp4": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error; do not create replacement tasks on ambiguous submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retry_after": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/uploads/image": {
+      "post": {
+        "summary": "Upload authorized image using multipart field file; image/audio <=20MB, video <=50MB",
+        "operationId": "post_uploads_image",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error; do not create replacement tasks on ambiguous submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retry_after": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uploads/video": {
+      "post": {
+        "summary": "Upload authorized video using multipart field file; image/audio <=20MB, video <=50MB",
+        "operationId": "post_uploads_video",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error; do not create replacement tasks on ambiguous submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retry_after": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uploads/audio": {
+      "post": {
+        "summary": "Upload authorized audio using multipart field file; image/audio <=20MB, video <=50MB",
+        "operationId": "post_uploads_audio",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error; do not create replacement tasks on ambiguous submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retry_after": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

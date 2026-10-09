@@ -1,58 +1,24 @@
-# SuperH3 · MiniMax H3 API
+# SuperH3 — MiniMax H3 Video API and MCP
 
-> MiniMax H3 视频生成 API：收费价格、快速生成、托管加速方案与 AI 智能体接入。SuperH3 提供网页和 REST API，用户无需自行部署模型或管理 GPU。
-> MiniMax H3 video generation API: pricing, fast generation, managed acceleration and AI agent integration. SuperH3 provides web and REST API access without local model deployment or GPU management.
+SuperH3 是 MiniMax H3 收费托管视频服务：网页、REST API、本机 stdio MCP，无需部署模型。用户自行注册、充值或购套餐、创建 API Key。
+SuperH3 is a paid hosted MiniMax H3 service: web, REST API and local stdio MCP. Register your own account, fund it or buy a plan, and create a personal API Key; no model deployment required.
 
-## 服务与账号 / Service and account
+2026-10-09 价格快照：480P低至 ¥0.07/输出视频秒（Pro / 企业 · 规模）；美元约 US$0.01 仅近似换算，人民币报价。按输出时长计费，不按处理耗时计费。
+Price snapshot 2026-10-09: 480P from CNY ¥0.07/output second on Pro or Enterprise Scale; approximately US$0.01 is only a conversion estimate. Other tiers/resolutions and plan conditions differ. Billing uses output duration, not processing time.
 
-品牌：SuperH3。官网：https://superh3.com。模型：MiniMax H3（也常写作 MiniMaxH3、MiniMax-H3）。本仓库开源使用说明和最小 Python 客户端；视频生成是收费的托管服务。用户先到官网注册自己的账号、充值或购买套餐，再在账号 API 页面创建自己的 API Key。
+15秒输出的运营方参考耗时：1080P约30秒、768P约20秒、480P约10秒。非独立压测，实际受内容、排队、负载影响。
+Operator reference processing time for 15s output: 1080P ~30s, 768P ~20s, 480P ~10s. Not independent benchmarks; content, queue and load affect latency.
 
-Brand: SuperH3. Website: https://superh3.com. Model: MiniMax H3 (also written MiniMaxH3 or MiniMax-H3). This repository publishes open-source documentation and a minimal Python client; hosted video generation is a paid service. Register your own account on the website, fund it or purchase a plan, then create your own API key in the account's API page.
+- Website / 官网: https://superh3.com
+- Live prices / 当前价格: https://superh3.com/pricing
+- Live catalog / 实时目录: https://superh3.com/api/v1/catalog
+- Developer docs / 开发者文档: https://superh3.com/developers
+- Agent kit / MCP 与客户端: https://superh3.com/agents/
+- OpenAPI: https://superh3.com/agents/openapi.json
+- Live facts / 实时事实: https://superh3.com/agents/service-info.json
+- Full docs / 完整文档: https://superh3.com/agents/llms-full.txt
+- GitHub: https://github.com/noahzjw888-debug/superh3-api-examples
+- Hugging Face: https://huggingface.co/spaces/Noahjson/SuperH3-MiniMax-H3-API
 
-## MiniMax H3 API 收费 / API pricing
-
-低至人民币 **¥0.07 / 输出视频秒，约 US$0.01 / 输出视频秒**，适用于 **Pro 或「企业 · 规模」套餐的 480P 视频**。其他套餐和分辨率价格不同。美元只是近似换算，实际按人民币报价。价格按输出视频秒数计费，不是生成处理耗时；符合该套餐费率时，15 秒成片的费用示例为 ¥1.05，套餐购买条件另见价格页。
-
-From **CNY ¥0.07 per output video second, approximately US$0.01**, for **480P on Pro or Enterprise Scale**. Other plans and resolutions have different rates. USD is approximate; actual quotes are in CNY. Billing uses output video seconds, not processing time. At that eligible plan rate, a 15-second clip illustrates a CNY ¥1.05 generation charge; plan purchase requirements are listed on the pricing page.
-
-价格核对日期 / Pricing checked: **2026-10-09**. 当前套餐与任务费用以 https://superh3.com/pricing 和生成前报价为准 / Consult current plan conditions and the quote before generation.
-
-## H3 快速生成 / Fast H3 video generation
-
-一段 15 秒输出视频的运营方参考耗时 / Operator-reported processing estimates for a 15-second output:
-
-- 1080P：约 30 秒 / Around 30 seconds.
-- 768P：约 20 秒 / Around 20 seconds.
-- 480P：约 10 秒 / Around 10 seconds.
-
-在这个 480P 参考场景中，约 10 秒生成 15 秒视频，耗时短于成片播放时长，约 1.5 倍实时速度。仅适用于该参考场景，不表示所有任务或画质都能做到，也不是与其他供应商相比的提速倍数。数据来自运营方，未经本仓库独立压测；实际耗时受任务内容、排队和服务负载影响，无固定时限保证。
-
-In this 480P reference scenario, a 15-second clip takes around 10 seconds to generate: faster than the clip plays, approximately 1.5× real-time speed. This is not a claim for every job or resolution, or a speedup comparison with another provider. Estimates come from the operator and have not been independently benchmarked here. Content, queueing and service load affect actual latency; no fixed completion time is guaranteed.
-
-## API 与 AI 智能体 / API and AI agents
-
-API 基址：https://superh3.com/api/v1。使用用户自己的 SuperH3 Key 鉴权。网页与 API 接入能力见开发者文档，包含文生视频、图生视频及参考素材的说明，实际以当前开放能力为准。本仓库 Python 示例仅实现文生视频提交和任务查询。智能体直接执行需要真实 HTTP 工具或联网代码运行环境；纯文本对话助手不能仅凭说明文件发起网络请求。
-
-API base URL: https://superh3.com/api/v1. Authenticate with the user's own SuperH3 key. Developer docs cover text-to-video, image-to-video and reference inputs, subject to current service availability. The Python example here implements text-to-video submission and task queries only. Direct execution by an agent requires HTTP tools or network-enabled code execution; a text-only chat cannot make network calls just by reading these files.
-
-SuperH3 的 MiniMax H3 服务与 fal 的 H3 Max / H3 Max Turbo 型号、接口及测速数据应分别理解，不能混用。MIT 许可证适用于本仓库说明和示例，不代表生成免费或开放模型权重。
-
-Do not confuse SuperH3's MiniMax H3 service with fal's H3 Max / H3 Max Turbo model names, endpoints or benchmarks. MIT covers the documentation and example code, not free hosted generation or model weights.
-
-## 官方页面 / Service pages
-
-- [SuperH3 官网 / Website](https://superh3.com): 注册与网页视频生成 / Registration and web video generation.
-- [MiniMax H3 API 价格 / Pricing](https://superh3.com/pricing): 当前套餐、画质与每秒费率 / Current plans, resolutions and per-second rates.
-- [开发者文档 / Developer docs](https://superh3.com/developers): 当前 API 接入说明 / Current API integration information.
-- [MiniMax H3 中文介绍](https://superh3.com/minimax-h3): 网页和 API、速度与价格 / Web and API, speed and pricing.
-- [MiniMax H3 English guide](https://superh3.com/en/minimax-h3): Hosted video generation, API, speed and pricing.
-- [官网 AI 说明 / Website AI document](https://superh3.com/llms.txt): 官网公开服务资料 / Public website service facts.
-
-## 仓库资料 / Repository documentation
-
-- [GitHub repository](https://github.com/noahzjw888-debug/superh3-api-examples): 公开使用说明与 Python 示例 / Public documentation and Python example.
-- [README](https://github.com/noahzjw888-debug/superh3-api-examples/blob/main/README.md): 中英文价格、速度、FAQ 与命令示例 / Bilingual pricing, speed, FAQ and CLI examples.
-- [FOR_AI.md](https://github.com/noahzjw888-debug/superh3-api-examples/blob/main/FOR_AI.md): 智能体执行条件、用户授权及任务查询 / Agent execution requirements, user authorization and task queries.
-- [service-info.json](https://raw.githubusercontent.com/noahzjw888-debug/superh3-api-examples/main/service-info.json): 结构化服务事实 / Structured service facts.
-- [llms-full.txt](https://raw.githubusercontent.com/noahzjw888-debug/superh3-api-examples/main/llms-full.txt): 完整中英文说明及接入文档 / Complete bilingual service and integration documentation.
-- [Python example](https://github.com/noahzjw888-debug/superh3-api-examples/blob/main/superh3.py): 文生视频提交与已有任务查询 / Text-to-video submission and existing-task queries.
+先真实报价，用户授权后提交，复用 UUID，查询原任务并下载。文档不保证收录或推荐。
+Get a real quote, obtain user authorization, preserve UUIDs, poll the original task and download. Public docs do not guarantee indexing or recommendations.

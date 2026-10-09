@@ -1,0 +1,274 @@
+{
+  "tools": [
+    {
+      "name": "superh3_service_info",
+      "description": "Read live MiniMax H3 capabilities and all current SuperH3 tier prices. Public, no key, no charge. Includes CNY units, account setup, source URLs and operator-reported latency conditions.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "superh3_account",
+      "description": "Read the user's SuperH3 account balance (integer microyuan), membership and concurrency. No charge.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "superh3_estimate",
+      "description": "Get a real account-specific MiniMax H3 price preview BEFORE asking for fee confirmation. No prompt, consent, upload, hold or charge; not a submission token.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "text",
+              "image",
+              "frames",
+              "reference"
+            ]
+          },
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "480",
+              "768",
+              "1080"
+            ]
+          },
+          "seconds": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 15
+          },
+          "card_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "mode",
+          "resolution",
+          "seconds"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "superh3_quote",
+      "description": "Get formal quote after user accepts terms/input rights. Save request and UUID locally; return request_id, exact cost, card usage, channel. No task or charge. Reuse request_id for retries.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "request": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "text",
+                  "image",
+                  "frames",
+                  "reference"
+                ]
+              },
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 7000
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "480",
+                  "768",
+                  "1080"
+                ]
+              },
+              "seconds": {
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 15
+              },
+              "aspect": {
+                "type": "string",
+                "enum": [
+                  "adaptive",
+                  "21:9",
+                  "16:9",
+                  "4:3",
+                  "1:1",
+                  "3:4",
+                  "9:16"
+                ]
+              },
+              "first_frame": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "last_frame": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "maxItems": 12
+              },
+              "project_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "card_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "accepted_policy": {
+                "type": "boolean",
+                "const": true
+              },
+              "idempotency_key": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "mode",
+              "prompt",
+              "resolution",
+              "seconds",
+              "aspect",
+              "accepted_policy"
+            ]
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "superh3_submit",
+      "description": "PAID ACTION. Submit an existing saved quote only after the user authorized this request, exact CNY cost and card usage. Reuse request_id on retry. Never create a replacement for submission_unknown. Returns task ID, not a finished video.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "confirmed_cost_microyuan": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "confirmed_card_uses": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "user_authorized": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "request_id",
+          "confirmed_cost_microyuan",
+          "confirmed_card_uses",
+          "user_authorized"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "superh3_status",
+      "description": "Query original task state. Poll 3–5 seconds; submission_unknown every 15 seconds. completed + result_available is required to download. No new task or charge.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "task_id"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "superh3_download",
+      "description": "Download an available completed video to the local MCP output directory, without overwriting files. Returns local path, bytes and SHA-256; this is not a public video URL. Does not regenerate.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "task_id"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    }
+  ]
+}

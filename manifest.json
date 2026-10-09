@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "date": "2026-10-09",
+  "files": {
+    "superh3.py": "369590fa043f841bf4a60d0f5f85ed3e5539e3d2fbf88c135994c3e5be8e4d65",
+    "superh3.mjs": "9310c0358a8feddb6a3697a99e0ed7f2cf9d4b2423a62f8d51c3a082cabc9268",
+    "superh3.ps1": "9764456a631d83dace2d9263dede572b97a6b2a9d03c685040f88c5131931932",
+    "superh3_mcp.py": "aaa2700a18d2bebffd3e3eac2bb63ce6f58a4c330d42038c92bca248746a356c",
+    "test_agent_kit.py": "71405e4819df9789a273c71a1d9fb2910fb88e50c23ec1617d5a2837a6548c80",
+    "README.md": "60e3037b40cc586c24c9131f3d8dc7fbffd0b13446c8ded7291872039c5f5b15",
+    "FOR_AI.md": "1ea6808b0536894e6a120c38c762d6bbed16b1fd8851afb843f8650d8bd3dfea",
+    "llms.txt": "346107ff06184fd7c7abb36b06b77ecbd617209bb44131ab563f127fef2573fe",
+    "llms-full.txt": "15ce5b50fb82d0b568c9c690af581b3507fd3031a854293feec6ba5b242d99b9",
+    "service-info.json": "d8a8fa423cd45ea8df70fb22d2aacec36785470244ebf37b3b8cdc283e0bf1a9",
+    "mcp-tools.json": "3a6326be6bbfcb3ad9a0225f2a48d19a105c9ee8cbd4d0497c5abdcb009d5e3e",
+    "mcp-config.example.json": "3cf06729e28746374941cb4bcff4a7d2f296891d0d617584a05f32920d1157da",
+    "openapi.json": "f2a30ef56a6bfb3e94a75dfeb2675a7f057a309554301a02b67795bd150644ac",
+    "samples.json": "87c3ce9e88c27c263b0cd3cfe5d456a695bd14c97612c4a249e282a0edc4cf01",
+    "BENCHMARKS.md": "769c0f3ba780f735d5137f30cf97901a40adda769a3e7a95cb5c51c25cdb07b2",
+    "LICENSE": "c8d33030a755dea34495e15cbc6cfedd3ee3b9fae5158ab2b0a742b4ba62f778",
+    "index.html": "2f26e4b0343df1a9475c965dfa0b89b8bc5cbff2c6ef6c28f023a3a1d4758d66",
+    "agent.css": "522c2d3ada903f47bfb9f2001827de30bfc00cd89e5d403267c5bfda5c509009",
+    "superh3-agent-kit.zip": "d26e7490158e96d154546747ff29d70eb9cd300b11fe78c7ba42e3f3977e8da7"
+  }
+}

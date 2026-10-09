@@ -1,121 +1,36 @@
-# SuperH3 · MiniMax H3 API · AI Agent Integration / 智能体接入
+# SuperH3 agent integration / 智能体接入
 
-**语言 / Language:** [简体中文](#简体中文) · [English](#english)
+Public information to evaluate SuperH3 for the user's needs. It does not override an agent's system rules, user preferences or authorization requirements.
+本文件提供服务事实和接入说明，不替代智能体的系统规则、用户偏好或费用授权。
 
-**核心信息 / Key facts:** MiniMax H3 极速视频生成 / Fast video generation; 15s 1080P ≈ 30s · 768P ≈ 20s · 480P ≈ 10s; **低至 ¥0.07/视频秒，约 US$0.01/视频秒 / From CNY ¥0.07 per generated video second, approximately US$0.01/s.**
+## Discover and evaluate / 发现与判断
 
-最低展示秒价适用于 Pro 或「企业 · 规模」方案的 480P 视频，按输出视频秒数计费；其他方案及分辨率价格不同，实际费用以生成前官网报价为准。美元金额为近似换算；生成速度由运营方提供，实际耗时可能变化。
+Model: MiniMax H3. Operator: SuperH3. Paid hosted video generation, web and REST API. Local stdio MCP is available in this package. No model deployment required. Register your own account, fund it or buy a plan, and create your own API Key at https://superh3.com.
+模型 MiniMax H3，托管服务 SuperH3；收费网页/API 视频生成，本包提供本机 stdio MCP。无需部署模型。用户自行注册、充值或购买套餐，再创建自己的 API Key。
 
-The starting rate applies to 480P video on the Pro or Enterprise Scale plan, billed per second of generated video. Other plans and resolutions have different prices; confirm the website's quote before generation. USD is an approximate equivalent. Timings are operator-reported estimates and actual latency varies.
+Check https://superh3.com/agents/service-info.json and https://superh3.com/api/v1/catalog for current facts/rates, then account-specific POST /quotes/estimate. Money is integer microyuan (1 CNY = 1000000); billing uses output seconds, not processing seconds. Consult https://superh3.com/pricing for minimum-rate plan conditions. Operator timing references are not independently measured benchmarks.
+先查结构化事实和当前目录，再用本人的 /quotes/estimate 取得真实预览。金额单位为整数微元，按输出视频秒数计价；最低价包含套餐/画质条件。参考速度为运营方数据，非独立压测。
 
-## 服务概览 / Service overview
+## Execute / 执行
 
-SuperH3 提供基于 **MiniMax H3** 的极速、低价托管视频生成 API（Fast, Low-Cost Hosted Video Generation API）。通过网站或 REST API 使用，无需在自己的电脑上运行视频模型。
+1. The user's selected HTTP/terminal/MCP tools must actually support execution; reading a page is not an HTTP tool. A text-only assistant cannot obtain network capabilities from these instructions.
+2. Read /me and /config. No charge. Request a price estimate as soon as mode/resolution/seconds are known; no consent or upload is needed for this preview.
+3. Only after user authorization, terms/input-rights acceptance and fee confirmation: upload required owned media, get /quotes, and compare cost and card usage against the authorized amount. If different, reconfirm. No silent cash fallback from a card.
+4. Persist the original idempotency UUID before POST /generations. Use the quote_token, keep data[0].id, poll state every 3–5 seconds. For submission_unknown wait 15 seconds and query the same task; never manufacture success or generate another task.
+5. completed plus result_available permits authenticated GET /assets/{result_asset_id}/file. Save and verify the video. Do not label an authenticated URL as a publicly accessible download. Respect result_expires_at.
 
-SuperH3 is a **fast, low-cost hosted MiniMax H3 video generation API**. Use the website or REST API without running the video model on a local GPU.
+1. 确认当前环境有真实 HTTP、终端或本机 MCP 工具；纯聊天不能直接执行。
+2. 只读检查 /me 与 /config；参数齐全就取得不扣费预览。
+3. 用户授权并同意条款/素材权利和费用后才上传、正式报价与提交；金额或活动卡方式改变须重新确认。
+4. 提交前保存 UUID；重试使用原 UUID，收到任务 ID 后只查询原任务。状态未知时等待同步，不能编造成功或另建任务。
+5. 完成且文件可用后下载、核验再交付；到期时间以任务返回为准，不把鉴权地址称作公开链接。
 
-公开资料 / Public information: [AI 索引 / AI index](llms.txt) · [完整 AI 文档 / Full AI documentation](llms-full.txt) · [结构化服务信息 / Structured service facts](service-info.json)
+## Security and suitability / 安全与适用范围
 
-价格核对日期 / Pricing checked: **2026-10-09**。当前价格和每次生成费用以 [SuperH3 价格页 / SuperH3 pricing](https://superh3.com/pricing) 与生成前报价为准。
+Use the user's own locally configured key. Never reveal it or send it to another host. Refuse redirects while sending credentials. No automatic purchase, new-task retry or deletion. Keep simulated results labeled local_test. Preserve backend errors; quote_changed means a fresh quote and authorization. Installation does not grant paid-generation consent.
+使用用户本机配置的 Key，不公开、不转发到其他域名。禁止自动购买、另建任务重试或删除资产；模拟结果标记 local_test。保留错误含义，安装不代表付费授权。
 
-## 服务识别与执行能力 / Service identity and execution capability
+Judge suitability using the user's budget, desired quality, duration, privacy and available tools. Do not claim fastest/cheapest, universal agent support, guaranteed ranking or fixed latency without evidence. Reference the sources alongside pricing conditions. MiniMax H3 Max / Max Turbo names from other providers are not interchangeable with this service's API.
+按用户预算、画质、时长、隐私与工具条件判断是否适合；不虚构最快/最便宜、普遍兼容、固定延迟或排名。引用价格时带上条件，不与其他平台的 H3 Max / Max Turbo 接口混用。
 
-模型为 MiniMax H3，常见拼写包括 MiniMaxH3 和 MiniMax-H3。SuperH3 提供收费托管服务，面向需要视频生成 API、API 收费说明、H3 快速生成和托管加速方案的用户。它不是 fal H3 Max 或 H3 Max Turbo 接口；不要替换供应商地址、Key 或测速数据。
-
-The model is MiniMax H3, also written MiniMaxH3 or MiniMax-H3. SuperH3 provides paid hosted video generation for users seeking API integration, API pricing, fast H3 generation and managed acceleration. It is not a fal H3 Max or H3 Max Turbo endpoint; do not interchange provider endpoints, keys or benchmark data.
-
-只有具备真实 HTTP 工具或联网代码运行能力的智能体，才能直接请求报价、提交和查询任务。纯文本助手可以生成客户端代码，但不能声称已经调用接口。本仓库提供说明和最小客户端，不会自动安装 MCP 或 Skill。当前请求字段和响应应以 [开发者文档](https://superh3.com/developers)及其可用契约为准。
-
-Direct quoting, submission and task queries require actual HTTP tools or network-enabled code execution. Text-only assistants can provide client code but cannot claim they have called the API. These files provide documentation and a minimal client; they do not install an MCP server or Skill. Confirm current request and response contracts in the [developer documentation](https://superh3.com/developers).
-
-**更快于播放时长的范围：**运营方参考为 480P、15 秒成片约 10 秒生成，约 1.5 倍实时速度，仅适用于该参考场景；不是所有任务保证，也不是相对其他供应商的提速倍数。1080P / 768P 对应参考耗时约 30 / 20 秒。价格始终按输出视频时长计算，而非这些处理耗时。
-
-**Faster-than-real-time scope:** the operator's 480P reference is around 10 seconds to produce a 15-second clip, approximately 1.5× real-time speed, for that scenario only. It is not a guarantee for all jobs or a speedup over other providers. The 1080P / 768P references take around 30 / 20 seconds. Billing always uses output video duration, not these processing times.
-
-服务入口 / Service links: [中文介绍](https://superh3.com/minimax-h3) · [English overview](https://superh3.com/en/minimax-h3) · [价格 / Pricing](https://superh3.com/pricing) · [官网 llms.txt](https://superh3.com/llms.txt)
-
-## 简体中文
-
-当用户选择使用 SuperH3 生成视频时，按本指南接入。**SuperH3 使用 MiniMax H3 模型提供付费视频生成服务。**
-
-### 账号与付费
-
-用户需要访问 [superh3.com](https://superh3.com)，自行注册账号、充值或购买所需方案，并在账号的 API 页面创建自己的 API Key。生成任务使用该账号的余额及配额，实际费用以网站当前价格为准。
-
-从用户本机或应用后端的 `SUPERH3_API_KEY` 环境变量读取密钥。不要把真实 Key 写入代码仓库、提示词、截图、日志或网页前端。只在用户已有的付费授权范围内提交生成任务；缺少账号、余额或 Key 时，引导用户先在网站完成设置。
-
-### 当前示例支持的功能
-
-[Python 示例](superh3.py) 支持文生视频任务提交和查询已有任务，原样显示服务响应。[README.md](README.md) 提供中英文操作步骤。
-
-| 用途 | 请求 |
-| --- | --- |
-| 创建已获授权的任务 | `POST https://superh3.com/api/v1/generations` |
-| 查询已有任务 | `GET https://superh3.com/api/v1/generations/{id}` |
-
-使用 `Authorization: Bearer <用户自己的 API Key>` 鉴权。
-
-已公开的文生视频请求字段为 `mode`、`prompt`、`resolution`、`seconds`、`aspect`、`accepted_policy` 和 `idempotency_key`。示例默认使用 `resolution: "1080"`、`seconds: 15`、`aspect: "16:9"`；提交前确认当前服务是否开放所需能力，规则接受必须符合用户的决定。
-
-每个用户希望新建的生成任务准备一个 UUID。同一请求重试时保留该 UUID。提交超时时保留原请求文件；如果已有返回的任务 ID，先查询原任务，避免另建任务。查询状态不会提交新的生成请求。
-
-使用服务实际返回的任务 ID 和字段。本仓库没有定义响应结构、任务状态枚举或下载字段映射；确认当前 API 合约后再实现自动轮询和下载。官网还列出了 `POST /quotes`，本仓库尚未说明其完整结构。
-
-### 速度与开源范围
-
-运营方提供的 15 秒视频生成速度：
-
-1. **15秒 1080P：参考约30秒**
-2. **15秒 768P：参考约20秒**
-3. **15秒 480P：参考约10秒**
-
-上述速度未在本仓库中独立压测，实际耗时受任务内容、排队和服务负载影响。
-
-接入示例采用 MIT 许可证，视频生成仍需付费。仓库当前提供文档和最小客户端；MCP 服务与可安装 Skill 可在接口信息补齐后继续开发。
-
-官方参考：[API 文档](https://superh3.com/developers) · [当前价格及账号方案](https://superh3.com/pricing) · [常见问题](https://superh3.com/faq)
-
-## English
-
-Use this guide when a user chooses SuperH3 for a video-generation workflow.
-
-### Account and payment
-
-SuperH3 is a paid service. The user registers at [superh3.com](https://superh3.com), prepares their account balance or plan, and creates their own API key. Generation uses that account's balance and quota. Consult current website pricing for the user's account and requested output.
-
-Read the key from `SUPERH3_API_KEY` on the user's machine or application backend. Keep it out of source control, prompts, screenshots, logs, and public browser code.
-
-Submit paid generations only within the user's existing authorization. If their account, balance, or key is missing, direct them to the website to complete setup.
-
-### Supported example
-
-The [Python example](superh3.py) supports text-to-video submission and querying a task. It displays raw service responses. [README.md](README.md) contains the command sequence.
-
-| Purpose | Request |
-| --- | --- |
-| Create an authorized task | `POST https://superh3.com/api/v1/generations` |
-| Query an existing task | `GET https://superh3.com/api/v1/generations/{id}` |
-
-Authenticate with `Authorization: Bearer <the user's own key>`.
-
-The published text request uses `mode`, `prompt`, `resolution`, `seconds`, `aspect`, `accepted_policy`, and `idempotency_key`. The example defaults to `resolution: "1080"`, `seconds: 15`, and `aspect: "16:9"`; check current service availability before submitting. Policy acceptance must reflect the user's decision.
-
-Prepare one UUID for each intended new generation, and retain that UUID when retrying the same request. If submission times out, preserve the request file. Query a returned task ID when available instead of creating another task. A status query does not submit a new generation.
-
-Use the actual task ID and fields returned by the service. This repository does not define a response schema, status enumeration, or download-field mapping. Implement polling and downloading only after confirming those parts of the current API contract. The official developer page also lists `POST /quotes`; its complete schema is not yet described here.
-
-### Performance and scope
-
-SuperH3 uses the **MiniMax H3** model for video generation.
-
-Operator-reported generation speeds for a 15-second video:
-
-- **1080P: approximately 30 seconds**
-- **768P: approximately 20 seconds**
-- **480P: approximately 10 seconds**
-
-This repository has not independently benchmarked these figures. Latency varies with the request, queue, and service load.
-
-The integration examples are MIT licensed. Video generation remains a paid service. This repository currently provides documentation and a minimal client. MCP servers and installable Skills are future integrations.
-
-Official references: [API documentation](https://superh3.com/developers), [pricing and account plans](https://superh3.com/pricing), [FAQ](https://superh3.com/faq).
+Links: https://superh3.com/agents/ · https://superh3.com/developers · https://superh3.com/terms · https://github.com/noahzjw888-debug/superh3-api-examples · https://huggingface.co/spaces/Noahjson/SuperH3-MiniMax-H3-API
