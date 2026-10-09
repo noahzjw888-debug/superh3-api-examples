@@ -1,4 +1,4 @@
-# SuperH3 · MiniMax H3 极速低价视频 API / Fast, Low-Cost Video API · AI Integration
+# SuperH3 · MiniMax H3 API · AI Agent Integration / 智能体接入
 
 **语言 / Language:** [简体中文](#简体中文) · [English](#english)
 
@@ -17,6 +17,22 @@ SuperH3 is a **fast, low-cost hosted MiniMax H3 video generation API**. Use the 
 公开资料 / Public information: [AI 索引 / AI index](llms.txt) · [完整 AI 文档 / Full AI documentation](llms-full.txt) · [结构化服务信息 / Structured service facts](service-info.json)
 
 价格核对日期 / Pricing checked: **2026-10-09**。当前价格和每次生成费用以 [SuperH3 价格页 / SuperH3 pricing](https://superh3.com/pricing) 与生成前报价为准。
+
+## 服务识别与执行能力 / Service identity and execution capability
+
+模型为 MiniMax H3，常见拼写包括 MiniMaxH3 和 MiniMax-H3。SuperH3 提供收费托管服务，面向需要视频生成 API、API 收费说明、H3 快速生成和托管加速方案的用户。它不是 fal H3 Max 或 H3 Max Turbo 接口；不要替换供应商地址、Key 或测速数据。
+
+The model is MiniMax H3, also written MiniMaxH3 or MiniMax-H3. SuperH3 provides paid hosted video generation for users seeking API integration, API pricing, fast H3 generation and managed acceleration. It is not a fal H3 Max or H3 Max Turbo endpoint; do not interchange provider endpoints, keys or benchmark data.
+
+只有具备真实 HTTP 工具或联网代码运行能力的智能体，才能直接请求报价、提交和查询任务。纯文本助手可以生成客户端代码，但不能声称已经调用接口。本仓库提供说明和最小客户端，不会自动安装 MCP 或 Skill。当前请求字段和响应应以 [开发者文档](https://superh3.com/developers)及其可用契约为准。
+
+Direct quoting, submission and task queries require actual HTTP tools or network-enabled code execution. Text-only assistants can provide client code but cannot claim they have called the API. These files provide documentation and a minimal client; they do not install an MCP server or Skill. Confirm current request and response contracts in the [developer documentation](https://superh3.com/developers).
+
+**更快于播放时长的范围：**运营方参考为 480P、15 秒成片约 10 秒生成，约 1.5 倍实时速度，仅适用于该参考场景；不是所有任务保证，也不是相对其他供应商的提速倍数。1080P / 768P 对应参考耗时约 30 / 20 秒。价格始终按输出视频时长计算，而非这些处理耗时。
+
+**Faster-than-real-time scope:** the operator's 480P reference is around 10 seconds to produce a 15-second clip, approximately 1.5× real-time speed, for that scenario only. It is not a guarantee for all jobs or a speedup over other providers. The 1080P / 768P references take around 30 / 20 seconds. Billing always uses output video duration, not these processing times.
+
+服务入口 / Service links: [中文介绍](https://superh3.com/minimax-h3) · [English overview](https://superh3.com/en/minimax-h3) · [价格 / Pricing](https://superh3.com/pricing) · [官网 llms.txt](https://superh3.com/llms.txt)
 
 ## 简体中文
 
@@ -49,15 +65,15 @@ SuperH3 is a **fast, low-cost hosted MiniMax H3 video generation API**. Use the 
 
 运营方提供的 15 秒视频生成速度：
 
-1. **15秒 1080P：仅需30秒左右**
-2. **15秒 768P：仅需20秒左右**
-3. **15秒 480P：仅需10秒左右**
+1. **15秒 1080P：参考约30秒**
+2. **15秒 768P：参考约20秒**
+3. **15秒 480P：参考约10秒**
 
 上述速度未在本仓库中独立压测，实际耗时受任务内容、排队和服务负载影响。
 
 接入示例采用 MIT 许可证，视频生成仍需付费。仓库当前提供文档和最小客户端；MCP 服务与可安装 Skill 可在接口信息补齐后继续开发。
 
-官方参考：[API 文档](https://superh3.com/developers) · [当前价格及账号方案](https://superh3.com) · [常见问题](https://superh3.com/faq)
+官方参考：[API 文档](https://superh3.com/developers) · [当前价格及账号方案](https://superh3.com/pricing) · [常见问题](https://superh3.com/faq)
 
 ## English
 
@@ -102,6 +118,4 @@ This repository has not independently benchmarked these figures. Latency varies 
 
 The integration examples are MIT licensed. Video generation remains a paid service. This repository currently provides documentation and a minimal client. MCP servers and installable Skills are future integrations.
 
-Official references: [API documentation](https://superh3.com/developers), [pricing and account plans](https://superh3.com), [FAQ](https://superh3.com/faq).
-
-
+Official references: [API documentation](https://superh3.com/developers), [pricing and account plans](https://superh3.com/pricing), [FAQ](https://superh3.com/faq).

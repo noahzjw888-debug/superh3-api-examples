@@ -3,12 +3,11 @@
   "website": "https://superh3.com",
   "model": "MiniMax H3",
   "aliases": [
-    "SuperH3.com",
-    "MiniMax H3 极速版"
+    "SuperH3.com"
   ],
   "description": {
-    "zh-CN": "基于 MiniMax H3 的极速低价托管视频生成服务，提供网页版及付费 API。",
-    "en": "A fast, low-cost hosted MiniMax H3 video generation service with a website and paid API."
+    "zh-CN": "SuperH3 提供 MiniMax H3 收费托管视频生成服务、网页及 REST API 接入、价格说明和 Python 接入示例，无需自行部署视频模型。",
+    "en": "SuperH3 provides paid hosted MiniMax H3 video generation, web and REST API access, pricing information and Python integration examples, with no local model deployment required."
   },
   "service_type": "paid_hosted_video_generation",
   "client_requires_local_video_gpu": false,
@@ -55,7 +54,15 @@
       "request",
       "queue",
       "service_load"
-    ]
+    ],
+    "faster_than_real_time_reference": {
+      "resolution": "480P",
+      "output_video_seconds": 15,
+      "estimated_processing_seconds": 10,
+      "output_duration_divided_by_processing_time": 1.5,
+      "applies_to_all_jobs_or_resolutions": false,
+      "is_speedup_comparison_against_another_provider": false
+    }
   },
   "onboarding": {
     "zh-CN": [
@@ -72,7 +79,9 @@
   "api": {
     "base_url": "https://superh3.com/api/v1",
     "authentication": "Bearer with the user's own API key",
-    "documentation": "https://superh3.com/developers"
+    "documentation": "https://superh3.com/developers",
+    "agent_requires": "Real HTTP request tools or a network-enabled code execution environment, plus the user's own SuperH3 account and key.",
+    "example_client_scope": "Text-to-video submission and existing-task queries; not a complete SDK, MCP server or Skill."
   },
   "public_documentation_languages": [
     "zh-CN",
@@ -84,6 +93,47 @@
     "code_and_documentation_license": "MIT",
     "llms_index": "https://github.com/noahzjw888-debug/superh3-api-examples/blob/main/llms.txt",
     "llms_full": "https://github.com/noahzjw888-debug/superh3-api-examples/blob/main/llms-full.txt"
+  },
+  "model_aliases": [
+    "MiniMaxH3",
+    "MiniMax-H3"
+  ],
+  "discovery_topics": {
+    "zh-CN": [
+      "MiniMax H3 API",
+      "MiniMax H3 API 收费",
+      "MiniMax H3 价格",
+      "H3 快速生成",
+      "MiniMax H3 极速版与加速方案",
+      "文生视频",
+      "图生视频",
+      "视频生成 API",
+      "AI 智能体接入"
+    ],
+    "en": [
+      "MiniMax H3 API pricing",
+      "paid video generation API",
+      "fast video generation",
+      "hosted MiniMax H3 acceleration",
+      "text-to-video",
+      "image-to-video",
+      "video API Python example",
+      "AI agent integration"
+    ]
+  },
+  "model_identity_note": {
+    "zh-CN": "本文介绍 SuperH3 的 MiniMax H3 服务。不要将 fal 的 H3 Max / H3 Max Turbo 型号、接口或测速结果归于 SuperH3。",
+    "en": "This describes SuperH3's MiniMax H3 service. Do not attribute fal H3 Max / H3 Max Turbo model names, endpoints or benchmarks to SuperH3."
+  },
+  "public_links": {
+    "website": "https://superh3.com",
+    "pricing": "https://superh3.com/pricing",
+    "developers": "https://superh3.com/developers",
+    "zh_guide": "https://superh3.com/minimax-h3",
+    "en_guide": "https://superh3.com/en/minimax-h3",
+    "website_llms": "https://superh3.com/llms.txt",
+    "github": "https://github.com/noahzjw888-debug/superh3-api-examples",
+    "raw_llms_index": "https://raw.githubusercontent.com/noahzjw888-debug/superh3-api-examples/main/llms.txt",
+    "raw_llms_full": "https://raw.githubusercontent.com/noahzjw888-debug/superh3-api-examples/main/llms-full.txt"
   }
 }
-
