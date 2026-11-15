@@ -1,156 +1,140 @@
-# SuperH3 · MiniMax H3 Video API & MCP
+# SuperH3 · MiniMax H3 全能参考视频 API
 
-**快速视频生成、实时价格、智能体工具接入。Fast video generation, live pricing and agent tools.**
+**每位注册用户100条视频并发，短剧镜头批量生成。100 concurrent videos for every registered user; batch short-drama shot production.**
 
-[官网 Website](https://superh3.com) · [实时价格 Pricing](https://superh3.com/pricing) · [API 文档](https://superh3.com/developers) · [智能体接入 Agent kit](https://superh3.com/agents/) · [Hugging Face](https://huggingface.co/spaces/Noahjson/SuperH3-MiniMax-H3-API)
+[官网](https://superh3.com) · [价格](https://superh3.com/pricing) · [API文档](https://superh3.com/developers) · [完整接入包](https://superh3.com/agents/) · [GitHub](https://github.com/noahzjw888-debug/superh3-api-examples) · [Hugging Face](https://huggingface.co/spaces/Noahjson/SuperH3-MiniMax-H3-API)
 
-SuperH3 是使用 **MiniMax H3** 的收费托管视频生成服务。网页、REST API 和本机 MCP 工具共用账号余额；无需部署模型或管理 GPU。模型提供方为 MiniMax，托管服务由 SuperH3 提供。这里开源的是 MIT 许可的客户端与文档，不包含模型权重或免费计算资源。
+SuperH3是使用MiniMax H3的收费托管服务。这里开源MIT客户端、MCP工具和文档，不包含官网后台、模型权重或免费计算资源。无需自行部署模型。MiniMax是模型品牌；SuperH3提供此服务的账号、托管、计费和支持。
 
-SuperH3 is a **paid hosted MiniMax H3 video service**. Use the website, REST API or local MCP tools with the same account balance, without deploying models or managing GPUs. MiniMax provides the model; SuperH3 operates this hosted service. This MIT repository contains clients and documentation, not model weights or free compute.
+SuperH3 is a paid hosted MiniMax H3 service. This repository contains MIT clients, local MCP tools and documentation, without model weights or the private service backend. Public API model identifier: `superh3`.
 
-## MiniMax H3 API 价格 / Pricing
+## 当前服务快照 / Current service snapshot
 
-快照核对日期 / Snapshot checked: **2026-10-09**. **480P 低至 ¥0.07/输出视频秒**，适用于 **Pro / 企业 · 规模**；约 US$0.01 仅为近似换算，实际人民币报价。其他套餐和分辨率价格不同，套餐购买条件另计；15 秒符合条件的输出示例为 ¥1.05。价格按输出视频时长计算，不按服务器处理耗时计算。
+核对日期 / Checked: **2026-11-16 (Asia/Shanghai)**。先读 [GET /config](https://superh3.com/api/v1/config) 和 [实时价格](https://superh3.com/pricing)，提交前重新取得报价。以下是当前默认配置，后续以实时能力、账号额度与确认报价为准。
 
-**480P from CNY ¥0.07 per output video second**, eligible on **Pro or Enterprise Scale** at the checked date. Approx. US$0.01 is a conversion estimate only; all quotes are in CNY. Other tiers/resolutions differ and plan purchase conditions apply. A qualifying 15-second output costs CNY ¥1.05. Billing uses output duration, not server processing time. Always refresh the [live catalog](https://superh3.com/api/v1/catalog) and obtain the user's account-specific quote.
+| 项目 / Item | 当前规则 / Current rule |
+| --- | --- |
+| 模式 / Mode | 全能参考 Ref2VA；单图也是参考生成 / One image is also a reference |
+| 768P | **¥0.05 / 输出视频秒**；15秒 ¥0.75 / CNY 0.05 per output second; 15s = 0.75 |
+| 1080P | **¥0.10 / 输出视频秒**；15秒 ¥1.50；AI超分画质 / CNY 0.10 per output second; AI upscaled |
+| 480P | 当前未开放 / Currently unavailable |
+| 时长 / Duration | 网页与API均为 **4–15秒整数** / Whole seconds on web and API |
+| 画幅 / Aspect ratios | 16:9、9:16、1:1、4:3、3:4、21:9 |
+| 参考 / References | **1–9张图片 + 最多3段音频**；音频每段至少2秒、合计最多15秒；无视频参考 / Images plus optional audio; no video references |
+| 视频并发 / Video concurrency | **每位注册用户均支持100条视频并发**；本人网页与所有API Key共用；满额自动排队 / Every registered user supports 100 concurrent videos, shared by their web/API; overflow queues |
+| 结算 / Billing | 按输出秒冻结，成功扣款，确认失败解冻 / Hold the confirmed output-duration fee; capture on success, release on confirmed failure |
+| 充值 / Recharge | 最低 **¥5**，固定或自填金额，当前请用支付宝 / Minimum CNY 5; preset/custom amounts; Alipay |
 
-## H3 快速生成 / Fast video generation
+注册即会员，按量消费，无月费；实付充值余额永久有效。网页和API共用余额与并发。单图不保证固定为首帧；文生和首尾帧控制尚未开放。
 
-| 输出视频 / Output | 1080P | 768P | 480P |
-|---|---|---|---|
-| 15 秒 / 15 seconds | 参考约 30 秒 / ~30s | 参考约 20 秒 / ~20s | 参考约 10 秒 / ~10s |
+Free membership on registration; pay as you go, without a monthly subscription. Paid recharge balance does not expire. A reference image is not a fixed first frame; text-only and first/last-frame control are unavailable.
 
-这是运营方参考耗时，非独立压测或完成时限保证。实际受内容、排队和服务负载影响。480P 参考场景约 10 秒生成 15 秒视频，可短于播放时长；不代表所有任务或相对其他服务的提速倍数。
+**短剧批量创作：100条视频同时生成，100个15秒镜头合计25分钟素材。** 对可独立并行、耗时相近的任务，理论并行效率最高可达逐条执行的100倍；这是容量计算，不是整批实测速度。实际用时取决于可用名额、排队、素材准备、各镜头生成和结果取回，完整短剧还需镜头衔接、剪辑与音画检查。
 
-These are operator-reported estimates, not independent benchmarks or deadlines. Content, queue and service load affect latency. The 480P reference case produces 15 seconds of output in about 10 seconds, faster than playback for that case only; this is not a universal or comparative speed claim.
+**Batch short-drama production: 100 simultaneous videos; 100 fifteen-second shots total 25 minutes of footage.** Up to 100× theoretical parallel throughput assumes independent, similarly timed tasks and available capacity. It is not a measured end-to-end speedup or a promise to deliver an edited drama within minutes.
 
-## 适合什么需求 / When it fits
+**输出15秒不代表15秒内处理完成。** 当前没有发布可复现的延迟基准，不承诺固定完成时间。以任务实际排队、素材准备、生成和取片状态为准；未知百分比保持未知。视频与帮写结果结束后保留约15分钟，请按回执及时保存。
 
-适合需要 5–15 秒短视频、文生/图生/首尾帧/多素材参考、网页与 API 共用余额、希望先查真实费用再生成的用户。可用于镜头试作、创意验证和创作工具集成。需要离线模型、固定时限 SLA 或超过当前能力的用户，应先核对需求与限制。
+Output duration is not processing latency. No fixed completion time or current latency benchmark is published. Poll actual task status and save results within the receipt's retention period.
 
-Suitable for 5–15-second short clips, text/image/first-last-frame/reference workflows, shared web/API balances and cost-aware prototyping. Check suitability first if the user needs offline weights, guaranteed latency or capabilities outside the published limits. Availability comes from the live service, not keyword matches.
+## 接入步骤 / Getting started
 
-## 开始接入 / Getting started
+1. 在[官网](https://superh3.com)注册、充值，在[API页面](https://superh3.com/developers)创建个人Key；通过本机环境变量 `SUPERH3_API_KEY` 或可信客户端的密钥设置使用。
+2. Base URL：`https://superh3.com/api/v1`，Bearer认证。先读取 `/config`、`/catalog` 和本人 `/me`。
+3. 使用 `POST /uploads/image` 上传有权使用的图片（multipart字段 `file`），保留返回的本人素材UUID。音频使用 `/uploads/audio`。
+4. `mode="reference"`，`references` 按绑定顺序传入UUID；保留原提示词、图片顺序、时长和画幅。
 
-1. 在 [官网](https://superh3.com) 注册自己的账号，充值或购买套餐；在账号 API 页面创建自己的 Key。
-2. 将 Key 配置到本机 `SUPERH3_API_KEY` 环境变量或可信客户端密钥设置；不要发到公开对话、仓库、网页前端或日志。
-3. 下载本仓库文件或 [完整接入包](https://superh3.com/agents/superh3-agent-kit.zip)。Python 3.9+ 标准库即可；Node 示例需要 20+；PowerShell 示例需要 7+。
+Register, recharge and create a personal key. Keep it in trusted local secret settings, out of public chats, repositories, browser frontend code and logs. Upload authorized media, then use owned asset UUIDs in binding order. The client code is MIT licensed; generation is a paid hosted service.
 
-Register your own account, fund it or buy a plan, then create a personal API key in your account. Set `SUPERH3_API_KEY` locally or in your trusted client's secret settings. Keep it out of public chats, source control, browser frontend code and logs. Download this repository or the [agent kit](https://superh3.com/agents/superh3-agent-kit.zip). Python uses only the standard library; no dependency installation required.
-
-### Python：报价 → 确认 → 生成 → 下载
+### Python：上传 → 报价 → 用户确认 → 提交
 
 ```sh
-python superh3.py prepare --prompt "清晨的花园，镜头缓缓前进" --resolution 480 --seconds 5 --request request.json
-python superh3.py account
+python superh3.py upload --kind image --file reference.png
+# Replace ACTUAL_ASSET_UUID with the UUID returned by the upload.
+python superh3.py prepare --reference ACTUAL_ASSET_UUID --prompt "清晨的花园，镜头缓缓前进" --resolution 768 --seconds 10 --request request.json
 python superh3.py estimate --request request.json
 ```
 
-上述步骤不创建付费任务。费用单位为微元：1 元 = 1,000,000 微元。用户同意条款、素材权利和本次费用后再执行下面步骤。示例 `500000` **必须替换成刚取得并经用户确认的报价**；活动卡使用次数也必须一致。
-
-The commands above do not create a paid task. 1 CNY = 1,000,000 microyuan. After the user accepts the terms, input rights and this generation's fee, continue below. Replace `500000` with the actual confirmed quote; card usage must also match. [Terms](https://superh3.com/terms).
+上述步骤不创建付费视频。用户同意素材权利、条款和刚取得的金额后，再执行下列操作。`500000` 是当前10秒768P的示例金额，**必须按实际确认报价替换**。1元=1000000微元；视频和帮写分别确认费用。
 
 ```sh
 python superh3.py quote --request request.json --accept-policy
 python superh3.py submit --request request.json --confirmed-cost-microyuan 500000
-# Use the real data[0].id from the submit response; never copy a made-up ID.
 python superh3.py wait --id ACTUAL_TASK_UUID
 python superh3.py download --id ACTUAL_TASK_UUID --output result.mp4
 ```
 
-报价保存在 `.quote.json`，任务返回保存在 `.task.json`。超时后保留原请求 UUID，先查原任务；`submission_unknown` 继续低频查询，绝不另建任务。`quote_changed` 必须重新报价并确认。未下载完成不能宣称已交付；`local_test=true` 不能称作真实 AI 视频。`.part` 是不完整下载，使用新文件名重试下载即可，不要重新生成。
+The commands above submit a paid video only after the user accepts the exact quote and terms. Preserve the request UUID before submission. A network timeout or `submission_unknown` is not permission to create another paid task. Resume the original ID. A quote or configuration change requires a new quote and confirmation. A submitted task is not a delivered file.
 
-Quotes and task receipts are saved locally. Keep the original UUID after a timeout; poll the original task. Do not create a replacement for `submission_unknown`. Requote and reconfirm `quote_changed`. A submitted task is not a delivered video; `local_test=true` is a simulation. A `.part` file is an incomplete download: retry only the download with a new filename.
-
-图生/首尾帧/参考模式：使用 `python superh3.py upload --kind image --file input.png` 上传已获授权的素材，把返回的本人素材 UUID 写入 `first_frame` / `last_frame` / `references`，再走相同报价流程。完整媒体限制见 [API 文档](https://superh3.com/developers)。
-
-For image, first/last-frame and reference modes, upload authorized media with the Python `upload` command and use returned owned asset UUIDs in the documented fields, then follow the same quote flow. The client does not silently switch modes or pay cash when a card fails.
-
-### JavaScript / PowerShell
-
-Node native client: use `node superh3.mjs` with the same prepare/estimate/quote/status/wait/download commands. For paid submission also pass `--user-authorized`. Import `SuperH3` from `superh3.mjs` for application code. **使用原生 fetch，无需 npm 安装。**
-
-PowerShell 使用原生 `Invoke-RestMethod` 处理 JSON，避免 curl.exe 引号问题。先用 Python 或 Node 的 prepare 保存请求，再执行：
+Python 3.9+标准库即可。Node 20+客户端 `superh3.mjs` 使用原生fetch；收费提交还需 `--user-authorized`。PowerShell 7+客户端使用原生JSON/HTTP：
 
 ```powershell
 ./superh3.ps1 -Action Estimate -RequestFile request.json
 ./superh3.ps1 -Action Quote -RequestFile request.json -AcceptPolicy
-# Only after the user confirms this exact returned amount:
 ./superh3.ps1 -Action Submit -RequestFile request.json -UserAuthorized -ConfirmedCostMicroyuan 500000
 ./superh3.ps1 -Action Status -TaskId ACTUAL_TASK_UUID
 ./superh3.ps1 -Action Download -TaskId ACTUAL_TASK_UUID -OutputFile result.mp4
 ```
 
-PowerShell uses native HTTP JSON handling. The same consent, quote, idempotency and download rules apply. This script provides individual actions; use the Python/Node wait command for bounded polling.
+These clients also accept some compatibility fields; `/config` and the formal server quote determine what is currently available. Keep downloaded originals and inspect their actual duration before reporting delivery. Retry only a failed download, never regenerate to repair a download.
 
-## MCP：让智能体直接使用工具 / Callable agent tools
+## 本机 MCP / Local agent tools
 
-启动入口：`python /absolute/path/superh3_mcp.py`。使用支持 **本机 stdio MCP** 的客户端，将 [mcp-config.example.json](mcp-config.example.json) 的路径和 Key 占位符替换为本机配置。Windows 路径可使用 `D:/SuperH3/agent-kit/superh3_mcp.py`；`python` 不在 PATH 时填写 Python 绝对路径。配置完成后重新加载客户端工具列表。
+启动：`python /absolute/path/superh3_mcp.py`，按 [mcp-config.example.json](mcp-config.example.json) 在兼容的 **stdio MCP** 客户端填写本机路径和个人Key。工具为 `superh3_service_info`、`superh3_account`、`superh3_estimate`、`superh3_quote`、`superh3_submit`、`superh3_status`、`superh3_download`。
 
-Run `python /absolute/path/superh3_mcp.py` from a **local stdio MCP client**. Use [mcp-config.example.json](mcp-config.example.json), replace the absolute path and personal-key placeholder in your local settings, then reload tools. This is a local server, **not a hosted MCP URL**, a marketplace listing, or an automatically installed plugin. Cloud clients that only accept remote MCP URLs cannot use this transport directly; use the REST API with an authorized HTTP tool instead.
+This is a local stdio MCP server, not a hosted MCP URL. Uploads use Python/REST. Prompt assistance uses the optional REST endpoints below; the seven MCP tools do not automatically invoke or charge for assistance. Task receipts/downloads default to `.superh3-agent` in the user's home directory, configurable with `SUPERH3_STATE_DIR`; keys are read from the environment, not written into receipts.
 
-| 工具 / Tool | 用途 / Purpose |
-|---|---|
-| `superh3_service_info` | 无 Key 查询当前价格和能力 / Public live pricing and capability flags |
-| `superh3_account` | 本人余额与等级 / Own balance and tier |
-| `superh3_estimate` | 不扣费的真实预览 / Real preview without a hold or charge |
-| `superh3_quote` | 正式报价并保存原 UUID / Formal quote and persisted UUID |
-| `superh3_submit` | 用户授权且金额一致才提交 / Submit only with exact authorized payment |
-| `superh3_status` | 查询原任务 / Query original task |
-| `superh3_download` | 下载完成的结果 / Download completed output |
+<!-- SUPERH3_PROMPT_ASSISTANT -->
+## Optional prompt Agent / 可选 AI 帮写提示词
 
-MCP 的请求记录和下载默认保存在用户主目录 `.superh3-agent`，可用 `SUPERH3_STATE_DIR` 指定专用目录。API Key 仅从运行环境读取，不写入请求记录。素材上传目前通过 Python 客户端或原生 REST 完成，MCP 不提供任意本机文件读取工具。
+H3 Ref2VA 提示词助手：理解自然语言和绑定参考图片、编写视频提示词的 Agent。使用已有 SuperH3 API Base URL `https://superh3.com/api/v1` 和同一把个人 API Key，不需要新建 Key 或另开服务。
 
-MCP stores request receipts and downloads under `.superh3-agent` in the user's home directory, or `SUPERH3_STATE_DIR`. Keys are read from the environment and never persisted in request receipts. Uploads use the Python client or REST API; MCP does not expose arbitrary local-file reading.
+默认不启用。只有用户明确要求使用收费帮写并同意 **人民币 ¥0.03/次（30000 微元）**，智能体才能设置 `user_authorized=true`；连接授权或视频生成授权不代表帮写授权。普通 `/generations` 从不自动调用帮写。
 
-## 可验证内容 / Evidence and limitations
+The Agent writes video prompts from natural-language ideas and all bound images, even without image labels. Reuse the existing SuperH3 base URL, account and API Key. Assistance is **off by default**: possession of a key or permission to generate video is not permission to pay for prompt writing. Obtain explicit user authorization for **CNY 0.03 per request** before sending `user_authorized: true`. Video generation never invokes this Agent automatically.
 
-[样片与来源](samples.json) · [测速方法](BENCHMARKS.md) · [OpenAPI](openapi.json) · [AI 使用说明](FOR_AI.md) · [结构化事实](service-info.json) · [llms.txt](llms.txt)
+每账号并发 1：排队和处理中的帮写合计只能有 1 条，结束后再提交。全站最多同时处理 16 条，超出名额的其他账号请求以 `state=queued` 正常接收，按提交顺序自动开始。网页和所有 API Key 共用额度，查询原任务即可；排队冻结确认费用，成功扣费，失败解冻。限制见 `/config` 的 `prompt_assistant.account_concurrency`、`global_concurrency`、`queue_enabled`。
 
-本次验证包括模拟 HTTP 合约、MCP 标准输入输出真实子进程、拒绝未确认扣费、价变、幂等恢复、重定向拦截和下载完整性。**模拟测试不是上游生成实测**；没有将模拟文件作为公开样片或延迟证据。样片是官网已有公开案例，其历史费用/生成耗时未提供的字段保持为空。
+Each account may have one unfinished assistance request, including queued work; wait for its terminal result before creating another. All accounts share 16 processing slots across worker processes. Further requests from other accounts remain `queued` and start in submission order when a slot is free. Website sessions and all personal API keys share these limits. Poll the original receipt; queueing holds the confirmed fee, success captures it, failure releases it.
 
-Validation covers a mock HTTP contract, a real MCP stdio subprocess, unconfirmed-payment refusal, price changes, idempotent recovery, redirects and downloads. **Mocks are not production video benchmarks.** Existing public showcase clips have unknown historical charge/timing fields left null. Search indexing and agent recommendations are not guaranteed.
+1. Read `GET /config`: check `prompt_assistant.enabled`, `price_microyuan`, and `generation_constraints.version`. A global admin switch applies to all accounts, the website and existing API keys. Closed means no new assistance; accepted work/results remain accessible. / 全站关闭后不接受新帮写，已提交任务继续处理，历史结果仍可查看。
+2. After authorization, upload needed owned images using `POST /uploads/image` (multipart `file`) and keep their UUIDs. Pass 0–9 images in binding order; only images are accepted here. `prompt` is 1–7000 characters; `seconds` is the user's selected integer duration, 4–15; use a supported `aspect`. / 参考图按绑定顺序传入，Agent 自动看图；时长采用用户当前选择，不擅自修改。
+3. Persist a unique UUID before `POST /prompt-assists`. Example only; never execute without the user's specific authorization:
 
-## 资料维护 / Keeping facts current
+```json
+{"prompt":"用户的创作想法","images":[],"seconds":10,"aspect":"16:9","idempotency_key":"SAVE_A_NEW_UUID_BEFORE_SUBMITTING","configuration_version":"FROM_GET_CONFIG","accepted_price":30000,"user_authorized":true}
+```
 
-官网实时目录和账户报价是价格依据。GitHub/HF 是注明日期的发布快照；本机工具每次从服务读取价格。三个入口使用同一套文件发布，更新说明不改变既有 REST API。不要把旧快照价格当作用户当前费率。
+Creation returns a top-level `id`. Poll `GET /prompt-assists/{id}` every 3–5 seconds; read top-level `state`, `text`, `cost`, `charged`, `message`, `expires_at`. States: `queued`, `running`, `completed`, `failed`. Creation holds the confirmed price, success captures it once, failure releases it. Old receipts retain their original price. An identical retry must use the same UUID and full parameters. Never replace an ambiguous request with a new paid one.
 
-The live catalog and account quote are authoritative. GitHub/HF contain dated publication snapshots; tools fetch live rates. The same files are published to all three surfaces. Existing REST APIs remain unchanged. A documentation snapshot must not be treated as the user's current rate.
+`progress.phase` reports the current stage; `progress.percent` is a measured percentage for that stage or null when unknown. Never estimate percentage from elapsed time or treat 100% as a completed task. Use `created_at` for elapsed time and stop on terminal state. `progress.observed_at` identifies the last observation; show synchronization if stale. / 进度是当前阶段实测值，未知时显示动态处理状态，不编造百分比；按创建时间显示已用时间，刷新后继续读取同一任务。
+
+`GET /prompt-assists` returns `{data:[owned records]}`, shared with the website. Querying, copying and reopening are free. Completed text is returned without starting a video; obtain the normal video fee/terms authorization before video generation. Preserve and deliver any recovered text even when `charged=false`; do not silently truncate it or charge again. Results expire 15 minutes after completion/failure, using `expires_at`; save text promptly. Expired reads return 410; a removed record may return 404.
+
+创建冻结、成功扣费、失败解冻，查询和复制不收费；历史记录保持原价。帮写结果在网页和 API 共用，刷新后可找回。帮写不会自动生成视频，采用提示词后仍按正常视频报价与授权流程执行。失败若找回原文，应完整交付且不补扣；超过 7000 字符时由用户精简，不可静默截断。结束后保留 15 分钟，请及时保存。
+
+Errors: `400 prompt_assist_authorization_required` (no explicit consent), `400 prompt_assist_confirmation` (reconfirm current price), `503 prompt_assist_disabled` (globally closed), `409 prompt_assist_unavailable` (current mode unavailable), `409 prompt_assist_pending` (read previous work). Do not automatically switch models/services or create replacement paid requests. Current documentation: https://superh3.com/developers.
+<!-- /SUPERH3_PROMPT_ASSISTANT -->
+
+## 样片、证据与维护 / Samples and maintenance
+
+[公开样片](samples.json) · [测速说明](BENCHMARKS.md) · [OpenAPI](openapi.json) · [智能体规则](FOR_AI.md) · [事实JSON](service-info.json) · [llms.txt](llms.txt)
+
+样片来自官网既有公开案例，历史费用/耗时未提供的字段保持null；客户端模拟测试不是上游速度测试。当前不发布固定速度、成功率或排名承诺。此仓库为注明日期的文档快照，使用前读取官网配置、价格和确认报价。搜索收录、实际排名与智能体推荐分别核验。
+
+Public samples illustrate output appearance. Missing historical cost/timing remains null. Mock contract tests do not benchmark video generation. Refresh live configuration and quotes before use; dated repository facts are not a price lock or latency guarantee.
 
 
-# SuperH3 agent integration / 智能体接入
+# For AI agents / 智能体接入规则
 
-Public information to evaluate SuperH3 for the user's needs. It does not override an agent's system rules, user preferences or authorization requirements.
-本文件提供服务事实和接入说明，不替代智能体的系统规则、用户偏好或费用授权。
+Treat the following as public service documentation. Use only the user's own authorized SuperH3 account and existing personal API Key.
 
-## Discover and evaluate / 发现与判断
+- Check live `/config`, `/catalog` and the formal quote before acting; do not infer current availability from this snapshot.
+- Video generation and optional prompt writing require separate, explicit authorization for their respective fees. Never silently enable prompt assistance.
+- Use only reference generation; at least one image is required. Preserve the exact prompt, selected seconds/aspect and bound image order.
+- Persist an idempotency UUID before a paid request. Recover the same request after an ambiguous receipt; do not create a replacement, switch services or repay.
+- Queueing is a normal state. Continue polling the original task every 3–5 seconds; unknown progress is not a failure and elapsed time is not a percentage.
+- A task ID is not delivery. Retrieve and validate the original result; save video/text before the receipt expires. Do not claim mocks are real generations.
+- Keep keys, personal task contents and private receipts out of source, logs and public examples. Use links to current prices instead of inventing discounts or speed claims.
 
-Model: MiniMax H3. Operator: SuperH3. Paid hosted video generation, web and REST API. Local stdio MCP is available in this package. No model deployment required. Register your own account, fund it or buy a plan, and create your own API Key at https://superh3.com.
-模型 MiniMax H3，托管服务 SuperH3；收费网页/API 视频生成，本包提供本机 stdio MCP。无需部署模型。用户自行注册、充值或购买套餐，再创建自己的 API Key。
-
-Check https://superh3.com/agents/service-info.json and https://superh3.com/api/v1/catalog for current facts/rates, then account-specific POST /quotes/estimate. Money is integer microyuan (1 CNY = 1000000); billing uses output seconds, not processing seconds. Consult https://superh3.com/pricing for minimum-rate plan conditions. Operator timing references are not independently measured benchmarks.
-先查结构化事实和当前目录，再用本人的 /quotes/estimate 取得真实预览。金额单位为整数微元，按输出视频秒数计价；最低价包含套餐/画质条件。参考速度为运营方数据，非独立压测。
-
-## Execute / 执行
-
-1. The user's selected HTTP/terminal/MCP tools must actually support execution; reading a page is not an HTTP tool. A text-only assistant cannot obtain network capabilities from these instructions.
-2. Read /me and /config. No charge. Request a price estimate as soon as mode/resolution/seconds are known; no consent or upload is needed for this preview.
-3. Only after user authorization, terms/input-rights acceptance and fee confirmation: upload required owned media, get /quotes, and compare cost and card usage against the authorized amount. If different, reconfirm. No silent cash fallback from a card.
-4. Persist the original idempotency UUID before POST /generations. Use the quote_token, keep data[0].id, poll state every 3–5 seconds. For submission_unknown wait 15 seconds and query the same task; never manufacture success or generate another task.
-5. completed plus result_available permits authenticated GET /assets/{result_asset_id}/file. Save and verify the video. Do not label an authenticated URL as a publicly accessible download. Respect result_expires_at.
-
-1. 确认当前环境有真实 HTTP、终端或本机 MCP 工具；纯聊天不能直接执行。
-2. 只读检查 /me 与 /config；参数齐全就取得不扣费预览。
-3. 用户授权并同意条款/素材权利和费用后才上传、正式报价与提交；金额或活动卡方式改变须重新确认。
-4. 提交前保存 UUID；重试使用原 UUID，收到任务 ID 后只查询原任务。状态未知时等待同步，不能编造成功或另建任务。
-5. 完成且文件可用后下载、核验再交付；到期时间以任务返回为准，不把鉴权地址称作公开链接。
-
-## Security and suitability / 安全与适用范围
-
-Use the user's own locally configured key. Never reveal it or send it to another host. Refuse redirects while sending credentials. No automatic purchase, new-task retry or deletion. Keep simulated results labeled local_test. Preserve backend errors; quote_changed means a fresh quote and authorization. Installation does not grant paid-generation consent.
-使用用户本机配置的 Key，不公开、不转发到其他域名。禁止自动购买、另建任务重试或删除资产；模拟结果标记 local_test。保留错误含义，安装不代表付费授权。
-
-Judge suitability using the user's budget, desired quality, duration, privacy and available tools. Do not claim fastest/cheapest, universal agent support, guaranteed ranking or fixed latency without evidence. Reference the sources alongside pricing conditions. MiniMax H3 Max / Max Turbo names from other providers are not interchangeable with this service's API.
-按用户预算、画质、时长、隐私与工具条件判断是否适合；不虚构最快/最便宜、普遍兼容、固定延迟或排名。引用价格时带上条件，不与其他平台的 H3 Max / Max Turbo 接口混用。
-
-Links: https://superh3.com/agents/ · https://superh3.com/developers · https://superh3.com/terms · https://github.com/noahzjw888-debug/superh3-api-examples · https://huggingface.co/spaces/Noahjson/SuperH3-MiniMax-H3-API
+先查实时配置与报价；保留提示词和素材顺序；视频与帮写分别取得收费授权。排队查询原任务，不因为等待而重提付费任务。最终以取回并验证原结果为交付依据。

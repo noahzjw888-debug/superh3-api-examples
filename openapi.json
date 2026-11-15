@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "SuperH3 MiniMax H3 Video API",
-    "version": "2.0.0",
-    "description": "Agent integration subset of existing REST API. Own account/key. Prices use integer microyuan. See developers for full media limits."
+    "title": "SuperH3 Video API",
+    "version": "2.3.0",
+    "description": "Agent integration subset of existing REST API. Own account/key. Prices use integer microyuan. See developers for full media limits. Ref2VA reference generation only, including single-image requests; not fixed-first-frame I2VA. Legacy image + first_frame requests are normalized to reference. Public snapshot 2026-11-16. Always read live configuration and obtain separate authorization for optional prompt writing."
   },
   "servers": [
     {
@@ -20,6 +20,154 @@
       "personalKey": {
         "type": "http",
         "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "PromptAssistRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "prompt",
+          "images",
+          "seconds",
+          "aspect",
+          "idempotency_key",
+          "configuration_version",
+          "accepted_price",
+          "user_authorized"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 7000
+          },
+          "images": {
+            "type": "array",
+            "maxItems": 9,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Owned image UUIDs in binding order; the Agent reads all images even without labels."
+          },
+          "seconds": {
+            "type": "integer",
+            "minimum": 4,
+            "maximum": 15,
+            "description": "User's selected output duration"
+          },
+          "aspect": {
+            "type": "string",
+            "description": "Use current generation_constraints.aspects from GET /config"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Persist before submission; same UUID and parameters for network retries"
+          },
+          "configuration_version": {
+            "type": "string",
+            "description": "generation_constraints.version from GET /config"
+          },
+          "accepted_price": {
+            "type": "integer",
+            "const": 30000,
+            "description": "Confirmed microyuan; current CNY 0.03 per request"
+          },
+          "user_authorized": {
+            "type": "boolean",
+            "const": true,
+            "description": "Required explicit user authorization for paid assistance. Omission/false is rejected. Default behavior is not enabled; video authorization does not imply this consent."
+          }
+        }
+      },
+      "PromptAssistReceipt": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "model": {
+            "type": "string",
+            "const": "H3 Ref2VA 提示词助手"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "running",
+              "completed",
+              "failed"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "cost": {
+            "type": "integer",
+            "description": "Locked original price in microyuan"
+          },
+          "charged": {
+            "type": "boolean"
+          },
+          "error_code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finished_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "progress": {
+            "type": "object",
+            "properties": {
+              "phase": {
+                "type": "string",
+                "enum": [
+                  "preparing",
+                  "submitting",
+                  "waiting",
+                  "writing",
+                  "receiving",
+                  "checking",
+                  "processing"
+                ]
+              },
+              "percent": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Measured current-stage percentage; null if unknown. Never completion or ETA."
+              },
+              "observed_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
       }
     }
   },
@@ -263,24 +411,23 @@
                   "mode": {
                     "type": "string",
                     "enum": [
-                      "text",
-                      "image",
-                      "frames",
                       "reference"
-                    ]
+                    ],
+                    "description": "Ref2VA only. One image is still a reference, not a fixed first frame (I2VA)."
                   },
                   "resolution": {
                     "type": "string",
                     "enum": [
-                      "480",
                       "768",
                       "1080"
-                    ]
+                    ],
+                    "description": "Supported output quality. 2K is unavailable."
                   },
                   "seconds": {
                     "type": "integer",
-                    "minimum": 5,
-                    "maximum": 15
+                    "minimum": 4,
+                    "maximum": 15,
+                    "multipleOf": 1
                   },
                   "card_id": {
                     "type": "string",
@@ -394,11 +541,9 @@
                   "mode": {
                     "type": "string",
                     "enum": [
-                      "text",
-                      "image",
-                      "frames",
                       "reference"
-                    ]
+                    ],
+                    "description": "Ref2VA only. One image is still a reference, not a fixed first frame (I2VA)."
                   },
                   "prompt": {
                     "type": "string",
@@ -408,35 +553,27 @@
                   "resolution": {
                     "type": "string",
                     "enum": [
-                      "480",
                       "768",
                       "1080"
-                    ]
+                    ],
+                    "description": "Supported output quality. 2K is unavailable."
                   },
                   "seconds": {
                     "type": "integer",
-                    "minimum": 5,
-                    "maximum": 15
+                    "minimum": 4,
+                    "maximum": 15,
+                    "multipleOf": 1
                   },
                   "aspect": {
                     "type": "string",
                     "enum": [
-                      "adaptive",
-                      "21:9",
                       "16:9",
-                      "4:3",
+                      "9:16",
                       "1:1",
+                      "4:3",
                       "3:4",
-                      "9:16"
+                      "21:9"
                     ]
-                  },
-                  "first_frame": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "last_frame": {
-                    "type": "string",
-                    "format": "uuid"
                   },
                   "references": {
                     "type": "array",
@@ -444,7 +581,8 @@
                       "type": "string",
                       "format": "uuid"
                     },
-                    "maxItems": 12
+                    "maxItems": 12,
+                    "minItems": 1
                   },
                   "project_id": {
                     "type": "string",
@@ -472,7 +610,8 @@
                   "resolution",
                   "seconds",
                   "aspect",
-                  "accepted_policy"
+                  "accepted_policy",
+                  "references"
                 ]
               }
             }
@@ -623,11 +762,9 @@
                   "mode": {
                     "type": "string",
                     "enum": [
-                      "text",
-                      "image",
-                      "frames",
                       "reference"
-                    ]
+                    ],
+                    "description": "Ref2VA only. One image is still a reference, not a fixed first frame (I2VA)."
                   },
                   "prompt": {
                     "type": "string",
@@ -637,35 +774,27 @@
                   "resolution": {
                     "type": "string",
                     "enum": [
-                      "480",
                       "768",
                       "1080"
-                    ]
+                    ],
+                    "description": "Supported output quality. 2K is unavailable."
                   },
                   "seconds": {
                     "type": "integer",
-                    "minimum": 5,
-                    "maximum": 15
+                    "minimum": 4,
+                    "maximum": 15,
+                    "multipleOf": 1
                   },
                   "aspect": {
                     "type": "string",
                     "enum": [
-                      "adaptive",
-                      "21:9",
                       "16:9",
-                      "4:3",
+                      "9:16",
                       "1:1",
+                      "4:3",
                       "3:4",
-                      "9:16"
+                      "21:9"
                     ]
-                  },
-                  "first_frame": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "last_frame": {
-                    "type": "string",
-                    "format": "uuid"
                   },
                   "references": {
                     "type": "array",
@@ -673,7 +802,8 @@
                       "type": "string",
                       "format": "uuid"
                     },
-                    "maxItems": 12
+                    "maxItems": 12,
+                    "minItems": 1
                   },
                   "project_id": {
                     "type": "string",
@@ -703,7 +833,8 @@
                   "aspect",
                   "accepted_policy",
                   "idempotency_key",
-                  "quote_token"
+                  "quote_token",
+                  "references"
                 ]
               }
             }
@@ -975,69 +1106,6 @@
         }
       }
     },
-    "/uploads/video": {
-      "post": {
-        "summary": "Upload authorized video using multipart field file; image/audio <=20MB, video <=50MB",
-        "operationId": "post_uploads_video",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "API error; do not create replacement tasks on ambiguous submission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "retry_after": {
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "file"
-                ],
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/uploads/audio": {
       "post": {
         "summary": "Upload authorized audio using multipart field file; image/audio <=20MB, video <=50MB",
@@ -1099,6 +1167,106 @@
             }
           }
         }
+      }
+    },
+    "/models": {
+      "get": {
+        "summary": "Query the sole public model identifier superh3",
+        "responses": {
+          "200": {
+            "description": "One model, id superh3. No underlying model metadata is exposed."
+          }
+        }
+      }
+    },
+    "/prompt-assists": {
+      "post": {
+        "summary": "H3 Ref2VA 提示词助手 · optional CNY 0.03 per request; explicit consent required",
+        "description": "Same existing personal API Key and shared wallet. Prompt writing is off by default; never starts video generation. See /developers for consent and billing. One unfinished request per account (including queued work). All accounts share 16 processing slots; overflow remains queued in submission order. Website and API keys share these limits.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromptAssistReceipt"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "No automatic paid retry: 400 consent/price, 401 authentication, 409 unavailable/pending, 503 globally disabled, 410 expired, 404 inaccessible"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromptAssistRequest"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Read own web/API prompt-writing history, no charge",
+        "description": "Same existing personal API Key and shared wallet. Prompt writing is off by default; never starts video generation. See /developers for consent and billing.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PromptAssistReceipt"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "No automatic paid retry: 400 consent/price, 401 authentication, 409 unavailable/pending, 503 globally disabled, 410 expired, 404 inaccessible"
+          }
+        }
+      }
+    },
+    "/prompt-assists/{id}": {
+      "get": {
+        "summary": "Read original prompt-writing result, no charge",
+        "description": "Same existing personal API Key and shared wallet. Prompt writing is off by default; never starts video generation. See /developers for consent and billing.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromptAssistReceipt"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "No automatic paid retry: 400 consent/price, 401 authentication, 409 unavailable/pending, 503 globally disabled, 410 expired, 404 inaccessible"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
       }
     }
   }

@@ -12,6 +12,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import uuid
+from decimal import Decimal
 
 VERSION = "2.0.0"
 BASE_URL = "https://superh3.com/api/v1"
@@ -37,10 +38,14 @@ def validate_payload(payload):
     if not isinstance(payload.get("prompt"), str) or not 1 <= len(payload["prompt"].strip()) <= 7000:
         raise ValueError("Prompt must contain 1–7000 characters.")
     if payload.get("resolution") not in {"480", "768", "1080"}:
-        raise ValueError("Resolution must be a string: 480, 768 or 1080.")
-    if type(payload.get("seconds")) is not int or not 5 <= payload["seconds"] <= 15:
-        raise ValueError("Seconds must be an integer from 5 to 15.")
-    if payload.get("aspect") not in {"adaptive", "21:9", "16:9", "4:3", "1:1", "3:4", "9:16"}:
+        raise ValueError("Resolution must be a string: 480, 768 or 1080; check /config for availability.")
+    seconds = payload.get("seconds")
+    if type(seconds) not in (int, float):
+        raise ValueError("Seconds must be numeric, from 4 through 15, up to two decimal places.")
+    duration = Decimal(str(seconds))
+    if not duration.is_finite() or not 4 <= duration <= 15 or duration * 100 != (duration * 100).to_integral_value():
+        raise ValueError("Seconds must be from 4 through 15, up to two decimal places.")
+    if payload.get("aspect") not in {"adaptive", "21:9", "16:9", "4:3", "1:1", "3:4", "9:16", "3:2", "2:3", "9:21"}:
         raise ValueError("Unsupported aspect ratio.")
     if type(payload.get("accepted_policy")) is not bool:
         raise ValueError("accepted_policy must be a boolean.")
@@ -49,10 +54,9 @@ def validate_payload(payload):
     if not isinstance(refs, list) or len(refs) > 12:
         raise ValueError("references must contain at most 12 owned asset UUIDs.")
     mode = payload.get("mode")
-    valid = {"text": not (first or last or refs), "image": bool(first) and not (last or refs),
-             "frames": bool(first and last) and not refs, "reference": bool(refs) and not (first or last)}
+    valid = {"image": bool(first) and not (last or refs), "reference": bool(refs) and not (first or last)}
     if not valid.get(mode, False):
-        raise ValueError("Mode and input assets do not match; no automatic mode fallback.")
+        raise ValueError("Use Ref2VA: mode=reference with nonempty references. Single images are references, not fixed first frames. Legacy image+first_frame is an alias; text/frames are unavailable.")
     for item in [first, last, payload.get("project_id"), payload.get("card_id")] + refs:
         if item:
             identifier(item)
@@ -239,8 +243,9 @@ def main(argv=None):
     subs = parser.add_subparsers(dest="command", required=True)
     prep = subs.add_parser("prepare")
     prep.add_argument("--prompt", required=True)
-    prep.add_argument("--resolution", choices=["480", "768", "1080"], default="480")
-    prep.add_argument("--seconds", type=int, default=5)
+    prep.add_argument("--reference", action="append", required=True, help="Owned uploaded asset UUID; repeat for multiple references. Single images use Ref2VA, not I2VA.")
+    prep.add_argument("--resolution", choices=["480", "768", "1080"], default="768")
+    prep.add_argument("--seconds", type=float, default=5)
     prep.add_argument("--aspect", default="16:9")
     prep.add_argument("--request", type=Path, default=Path("request.json"))
     for name in ("estimate", "quote", "submit"):
@@ -267,7 +272,7 @@ def main(argv=None):
     client = Client()
     try:
         if args.command == "prepare":
-            payload = dict(mode="text", prompt=args.prompt, resolution=args.resolution, seconds=args.seconds,
+            payload = dict(mode="reference", references=args.reference, prompt=args.prompt, resolution=args.resolution, seconds=args.seconds,
                            aspect=args.aspect, accepted_policy=False, idempotency_key=str(uuid.uuid4()))
             validate_payload(payload)
             save_json(args.request, payload, new=True)

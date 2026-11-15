@@ -69,7 +69,7 @@ class AgentKitTests(unittest.TestCase):
     def setUp(self):
         ContractHandler.events = []; ContractHandler.state = "completed"
         self.client = Client(self.base, key="TEST_PLACEHOLDER")
-        self.payload = dict(mode="text", prompt="清晨的花园", resolution="480", seconds=5, aspect="16:9", accepted_policy=True, idempotency_key=str(uuid.uuid4()))
+        self.payload = dict(mode="reference", references=[ASSET], prompt="清晨的花园", resolution="480", seconds=5, aspect="16:9", accepted_policy=True, idempotency_key=str(uuid.uuid4()))
     def test_quote_submit_status_download(self):
         estimate = self.client.estimate(self.payload)
         self.assertNotIn("quote_token", estimate)
@@ -112,9 +112,17 @@ class AgentKitTests(unittest.TestCase):
         self.assertEqual(caught.exception.code, "wait_timeout")
         self.assertTrue(all(method == "GET" for method, _, _ in ContractHandler.events))
     def test_validation(self):
-        for changes in [{"seconds": True}, {"seconds": 4}, {"resolution": "480P"}, {"mode": "image"}, {"aspect": "nonsense"}, {"references": "bad"}, {"model": "unrecognized"}]:
+        for changes in [{"seconds": True}, {"seconds": 3.99}, {"seconds": 15.01}, {"seconds": 4.001}, {"seconds": "4.13"}, {"resolution": "480P"}, {"mode": "image"}, {"aspect": "nonsense"}, {"references": "bad"}, {"model": "unrecognized"}]:
             with self.assertRaises(ValueError): validate_payload({**self.payload, **changes})
-        validate_payload({**self.payload, "mode": "image", "first_frame": ASSET})
+        validate_payload({**self.payload, "mode": "image", "first_frame": ASSET, "references": []})
+        for seconds in [4, 4.01, 8.37, 14.99, 15]:
+            validate_payload({**self.payload, "seconds": seconds})
+    def test_aspect_resolution_matrix(self):
+        for aspect in ["16:9", "9:16", "1:1", "4:3", "3:4", "3:2", "2:3", "21:9", "9:21"]:
+            for resolution in ["480", "768", "1080"]:
+                validate_payload({**self.payload, "aspect": aspect, "resolution": resolution})
+        with self.assertRaises(ValueError):
+            validate_payload({**self.payload, "internal_option": "unsupported"})
     def test_mcp_protocol_and_persisted_workflow(self):
         with tempfile.TemporaryDirectory() as tmp:
             server = Server(self.client, tmp)

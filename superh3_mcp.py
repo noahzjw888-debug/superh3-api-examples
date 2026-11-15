@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import sys
 import uuid
+from decimal import Decimal
 from superh3 import Client, APIError, VERSION, identifier, fingerprint, save_json
 
 PROTOCOLS = {"2024-11-05", "2025-03-26", "2025-06-18", "2025-11-25"}
@@ -12,15 +13,15 @@ STR = {"type": "string"}
 UUID = {"type": "string", "format": "uuid"}
 INTEGER = {"type": "integer", "minimum": 0}
 REQUEST = {"type": "object", "additionalProperties": False, "properties": {
-    "mode": {"type": "string", "enum": ["text", "image", "frames", "reference"]},
+    "mode": {"type": "string", "enum": ["reference"]},
     "prompt": {"type": "string", "minLength": 1, "maxLength": 7000},
     "resolution": {"type": "string", "enum": ["480", "768", "1080"]},
-    "seconds": {"type": "integer", "minimum": 5, "maximum": 15},
-    "aspect": {"type": "string", "enum": ["adaptive", "21:9", "16:9", "4:3", "1:1", "3:4", "9:16"]},
-    "first_frame": UUID, "last_frame": UUID, "references": {"type": "array", "items": UUID, "maxItems": 12},
+    "seconds": {"type": "number", "minimum": 4, "maximum": 15, "multipleOf": 0.01},
+    "aspect": {"type": "string", "enum": ["adaptive", "16:9", "9:16", "1:1", "4:3", "3:4", "3:2", "2:3", "21:9", "9:21"]},
+    "references": {"type": "array", "items": UUID, "minItems":1, "maxItems": 12},
     "project_id": UUID, "card_id": UUID, "accepted_policy": {"type": "boolean", "const": True},
     "idempotency_key": UUID},
-    "required": ["mode", "prompt", "resolution", "seconds", "aspect", "accepted_policy"]}
+    "required": ["mode", "prompt", "resolution", "seconds", "aspect", "accepted_policy", "references"]}
 
 
 def tool(name, description, properties, required=(), read_only=True, local_write=False):
@@ -31,9 +32,9 @@ def tool(name, description, properties, required=(), read_only=True, local_write
 
 
 TOOLS = [
-    tool("service_info", "Read live MiniMax H3 capabilities and all current SuperH3 tier prices. Public, no key, no charge. Includes CNY units, account setup, source URLs and operator-reported latency conditions.", {}),
+    tool("service_info", "Read live SuperH3 capabilities, current pay-as-you-go prices and optional prompt-Agent availability. Public, no key, no charge. No fixed completion time is promised.", {}),
     tool("account", "Read the user's SuperH3 account balance (integer microyuan), membership and concurrency. No charge.", {}),
-    tool("estimate", "Get a real account-specific MiniMax H3 price preview BEFORE asking for fee confirmation. No prompt, consent, upload, hold or charge; not a submission token.", {k: REQUEST["properties"][k] for k in ["mode", "resolution", "seconds", "card_id"]}, ["mode", "resolution", "seconds"]),
+    tool("estimate", "Get a real account-specific SuperH3 price preview BEFORE asking for fee confirmation. No prompt, consent, upload, hold or charge; not a submission token.", {k: REQUEST["properties"][k] for k in ["mode", "resolution", "seconds", "card_id"]}, ["mode", "resolution", "seconds"]),
     tool("quote", "Get formal quote after user accepts terms/input rights. Save request and UUID locally; return request_id, exact cost, card usage, channel. No task or charge. Reuse request_id for retries.", {"request": REQUEST}, ["request"], False, True),
     tool("submit", "PAID ACTION. Submit an existing saved quote only after the user authorized this request, exact CNY cost and card usage. Reuse request_id on retry. Never create a replacement for submission_unknown. Returns task ID, not a finished video.", {"request_id": UUID, "confirmed_cost_microyuan": INTEGER, "confirmed_card_uses": {"type": "integer", "enum": [0, 1]}, "user_authorized": {"type": "boolean", "const": True}}, ["request_id", "confirmed_cost_microyuan", "confirmed_card_uses", "user_authorized"], False),
     tool("status", "Query original task state. Poll 3–5 seconds; submission_unknown every 15 seconds. completed + result_available is required to download. No new task or charge.", {"task_id": UUID}, ["task_id"]),
@@ -45,7 +46,7 @@ def validate(value, schema):
     kind = schema.get("type")
     valid = {"object": lambda: isinstance(value, dict), "array": lambda: isinstance(value, list),
              "string": lambda: isinstance(value, str), "boolean": lambda: type(value) is bool,
-             "integer": lambda: type(value) is int}
+             "integer": lambda: type(value) is int, "number": lambda: type(value) in (int, float)}
     if kind in valid and not valid[kind]():
         raise ValueError("Invalid argument type: " + kind)
     if "const" in schema and value != schema["const"]:
@@ -59,7 +60,7 @@ def validate(value, schema):
         for k, v in value.items():
             validate(v, props[k])
     if kind == "array":
-        if len(value) > schema.get("maxItems", 100):
+        if not schema.get("minItems",0) <= len(value) <= schema.get("maxItems",100):
             raise ValueError("Too many items.")
         for item in value:
             validate(item, schema["items"])
@@ -68,6 +69,11 @@ def validate(value, schema):
             raise ValueError("Invalid string length.")
         if schema.get("format") == "uuid":
             identifier(value)
+    if kind == "number":
+        number = Decimal(str(value))
+        step = Decimal(str(schema.get("multipleOf", 1)))
+        if not number.is_finite() or not schema.get("minimum", 0) <= number <= schema.get("maximum", 15) or number / step != (number / step).to_integral_value():
+            raise ValueError("Number out of range or precision.")
     if kind == "integer" and not schema.get("minimum", 0) <= value <= schema.get("maximum", 9_007_199_254_740_991):
         raise ValueError("Integer out of range.")
 
@@ -85,13 +91,12 @@ class Server:
 
     def call(self, name, args):
         if name == "superh3_service_info":
-            return {"brand": "SuperH3", "model": "MiniMax H3", "website": "https://superh3.com",
+            return {"brand": "SuperH3", "model": "superh3", "website": "https://superh3.com",
                     "catalog": self.client.request("GET", "/catalog", public=True),
                     "config": self.client.request("GET", "/config", public=True),
                     "money_unit": "integer microyuan; 1 CNY = 1000000 microyuan; billed per output video second",
                     "onboarding": "Register at https://superh3.com, fund your own account, create a personal API Key. Paid hosted service, no model deployment required.",
-                    "reference_latency_seconds_for_15s_output": {"480": 10, "768": 20, "1080": 30},
-                    "latency_provenance": "Operator estimates, not independently benchmarked; queue/content/load affect actual time.",
+                    "latency_policy": "Read real stage progress and task timing fields. No fixed completion time is guaranteed; queue/content/load affect actual time.",
                     "pricing_url": "https://superh3.com/pricing", "docs_url": "https://superh3.com/agents/"}
         if name == "superh3_account":
             return self.client.request("GET", "/me")
@@ -151,7 +156,7 @@ class Server:
             return {**response, "result": {"protocolVersion": version if version in PROTOCOLS else "2025-11-25",
                     "capabilities": {"tools": {"listChanged": False}},
                     "serverInfo": {"name": "superh3-minimax-h3", "version": VERSION},
-                    "instructions": "Paid MiniMax H3 video service. Use live catalog and estimate for comparison. Submit only within user authorization. Configuration is not purchase consent. Keep original request IDs after uncertain submission."}}
+                    "instructions": "Paid SuperH3 video service. Use live catalog and estimate for comparison. Submit only within user authorization. Configuration is not purchase consent. Keep original request IDs after uncertain submission."}}
         if method == "ping":
             return {**response, "result": {}}
         if not self.ready:

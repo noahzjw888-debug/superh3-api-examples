@@ -2,7 +2,7 @@
   "tools": [
     {
       "name": "superh3_service_info",
-      "description": "Read live MiniMax H3 capabilities and all current SuperH3 tier prices. Public, no key, no charge. Includes CNY units, account setup, source URLs and operator-reported latency conditions.",
+      "description": "Read live SuperH3 capabilities, current pay-as-you-go prices and optional prompt-Agent availability. Public, no key, no charge. No fixed completion time is promised.",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -34,31 +34,28 @@
     },
     {
       "name": "superh3_estimate",
-      "description": "Get a real account-specific MiniMax H3 price preview BEFORE asking for fee confirmation. No prompt, consent, upload, hold or charge; not a submission token.",
+      "description": "Get a real account-specific SuperH3 price preview BEFORE asking for fee confirmation. No prompt, consent, upload, hold or charge; not a submission token.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "mode": {
             "type": "string",
             "enum": [
-              "text",
-              "image",
-              "frames",
               "reference"
             ]
           },
           "resolution": {
             "type": "string",
             "enum": [
-              "480",
               "768",
               "1080"
             ]
           },
           "seconds": {
             "type": "integer",
-            "minimum": 5,
-            "maximum": 15
+            "minimum": 4,
+            "maximum": 15,
+            "multipleOf": 1
           },
           "card_id": {
             "type": "string",
@@ -92,9 +89,6 @@
               "mode": {
                 "type": "string",
                 "enum": [
-                  "text",
-                  "image",
-                  "frames",
                   "reference"
                 ]
               },
@@ -106,35 +100,26 @@
               "resolution": {
                 "type": "string",
                 "enum": [
-                  "480",
                   "768",
                   "1080"
                 ]
               },
               "seconds": {
                 "type": "integer",
-                "minimum": 5,
-                "maximum": 15
+                "minimum": 4,
+                "maximum": 15,
+                "multipleOf": 1
               },
               "aspect": {
                 "type": "string",
                 "enum": [
-                  "adaptive",
-                  "21:9",
                   "16:9",
-                  "4:3",
+                  "9:16",
                   "1:1",
+                  "4:3",
                   "3:4",
-                  "9:16"
+                  "21:9"
                 ]
-              },
-              "first_frame": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "last_frame": {
-                "type": "string",
-                "format": "uuid"
               },
               "references": {
                 "type": "array",
@@ -142,6 +127,7 @@
                   "type": "string",
                   "format": "uuid"
                 },
+                "minItems": 1,
                 "maxItems": 12
               },
               "project_id": {
@@ -167,7 +153,8 @@
               "resolution",
               "seconds",
               "aspect",
-              "accepted_policy"
+              "accepted_policy",
+              "references"
             ]
           }
         },

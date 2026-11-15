@@ -94,7 +94,8 @@ async function main() {
   let result;
   if (action === 'prepare') {
     if (typeof args.prompt !== 'string' || !args.prompt.trim()) throw new Error('--prompt required.');
-    result = { mode: 'text', prompt: args.prompt, resolution: String(args.resolution || '480'), seconds: Number(args.seconds || 5), aspect: args.aspect || '16:9', accepted_policy: false, idempotency_key: randomUUID() };
+    if (typeof args.references !== 'string' || !args.references) throw new Error('--references requires comma-separated owned asset UUIDs. Ref2VA only, not fixed-first-frame I2VA.');
+    result = { mode: 'reference', references: args.references.split(',').map(v=>uuid(v.trim())), prompt: args.prompt, resolution: String(args.resolution || '768'), seconds: Number(args.seconds || 5), aspect: args.aspect || '16:9', accepted_policy: false, idempotency_key: randomUUID() };
     await writeFile(filename, JSON.stringify(result, null, 2), { flag: 'wx' });
   } else if (['estimate', 'quote', 'submit'].includes(action)) {
     const request = JSON.parse((await readFile(filename, 'utf8')).replace(/^\uFEFF/, ''));

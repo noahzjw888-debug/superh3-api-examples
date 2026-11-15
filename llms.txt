@@ -1,24 +1,24 @@
-# SuperH3 — MiniMax H3 Video API and MCP
+# SuperH3 · MiniMax H3 Ref2VA API
 
-SuperH3 是 MiniMax H3 收费托管视频服务：网页、REST API、本机 stdio MCP，无需部署模型。用户自行注册、充值或购套餐、创建 API Key。
-SuperH3 is a paid hosted MiniMax H3 service: web, REST API and local stdio MCP. Register your own account, fund it or buy a plan, and create a personal API Key; no model deployment required.
+> Paid hosted reference-guided video generation. Public snapshot: 2026-11-16 Asia/Shanghai. Refresh https://superh3.com/api/v1/config and https://superh3.com/pricing before use.
 
-2026-10-09 价格快照：480P低至 ¥0.07/输出视频秒（Pro / 企业 · 规模）；美元约 US$0.01 仅近似换算，人民币报价。按输出时长计费，不按处理耗时计费。
-Price snapshot 2026-10-09: 480P from CNY ¥0.07/output second on Pro or Enterprise Scale; approximately US$0.01 is only a conversion estimate. Other tiers/resolutions and plan conditions differ. Billing uses output duration, not processing time.
+- Website/API use the same personal account, key, balance and concurrency. Register, recharge (minimum CNY 5, Alipay) and create your own key. No monthly subscription; paid recharge balance does not expire.
+- Current video: Ref2VA only, 1–9 images plus at most 3 audio clips (2s minimum each; 15s combined), no video references. Single images are references, not fixed first frames. No text-only or first/last-frame control.
+- Current quality: 768P CNY 0.05/output second; 1080P CNY 0.10/output second (AI upscaled). 480P unavailable. 4–15 whole seconds; six aspect ratios. Every registered user supports 100 concurrent videos; excess accepted tasks queue.
+- Batch short-drama shots: 100 fifteen-second outputs total 25 minutes of footage. Up to 100x theoretical parallel throughput assumes independent similarly timed tasks and available capacity; it is not a measured completion time or a finished edited drama.
+- Output duration is not processing latency. No current fixed completion-time benchmark is published. Read actual status; never infer progress from elapsed time.
+- Hold the confirmed fee at submission, settle on success, release on confirmed failure. Persist idempotency and resume the original task if uncertain.
+- Optional H3 Ref2VA 提示词助手: CNY 0.03/request, same API Key; off by default, explicit user_authorized:true and accepted_price:30000 required. One unfinished request per account, sixteen global running, overflow queues. It reads all bound pictures and selected duration and never starts a video.
+- Save completed video/text within the receipt's 15-minute retention period. Querying/copying is free.
+- API base: https://superh3.com/api/v1 ; public model: superh3. Python/Node/PowerShell clients and seven local stdio MCP tools; no hosted MCP URL.
 
-15秒输出的运营方参考耗时：1080P约30秒、768P约20秒、480P约10秒。非独立压测，实际受内容、排队、负载影响。
-Operator reference processing time for 15s output: 1080P ~30s, 768P ~20s, 480P ~10s. Not independent benchmarks; content, queue and load affect latency.
+中文：全能参考；768P每秒0.05元，1080P每秒0.10元；每位注册用户均支持100条视频并发，满额排队。100个15秒镜头合计25分钟素材；理论并行效率最高100倍，实际取决于排队与任务耗时，不保证几分钟交付完整短剧。AI帮写每次0.03元，默认关闭，明确授权才调用；每账号1条未完成，全站16并发。价格和能力以实时配置与报价为准。
 
-- Website / 官网: https://superh3.com
-- Live prices / 当前价格: https://superh3.com/pricing
-- Live catalog / 实时目录: https://superh3.com/api/v1/catalog
-- Developer docs / 开发者文档: https://superh3.com/developers
-- Agent kit / MCP 与客户端: https://superh3.com/agents/
-- OpenAPI: https://superh3.com/agents/openapi.json
-- Live facts / 实时事实: https://superh3.com/agents/service-info.json
-- Full docs / 完整文档: https://superh3.com/agents/llms-full.txt
-- GitHub: https://github.com/noahzjw888-debug/superh3-api-examples
-- Hugging Face: https://huggingface.co/spaces/Noahjson/SuperH3-MiniMax-H3-API
-
-先真实报价，用户授权后提交，复用 UUID，查询原任务并下载。文档不保证收录或推荐。
-Get a real quote, obtain user authorization, preserve UUIDs, poll the original task and download. Public docs do not guarantee indexing or recommendations.
+## Authoritative links
+- [Pricing](https://superh3.com/pricing)
+- [Developer API](https://superh3.com/developers)
+- [Agent instructions](https://superh3.com/agents/FOR_AI.md)
+- [OpenAPI](https://superh3.com/agents/openapi.json)
+- [Live service facts](https://superh3.com/agents/service-info.json)
+- [GitHub](https://github.com/noahzjw888-debug/superh3-api-examples)
+- [Hugging Face](https://huggingface.co/spaces/Noahjson/SuperH3-MiniMax-H3-API)

@@ -1,242 +1,114 @@
 {
-  "schema_version": "2.0",
-  "brand": "SuperH3",
-  "model": "MiniMax H3",
-  "website": "https://superh3.com",
-  "description_zh": "收费托管视频生成服务；网页、REST API 与本机 MCP 接入，无需部署模型。",
-  "description_en": "Paid hosted video generation through a website, REST API and local MCP tools; no model deployment required.",
-  "service_operator": "SuperH3",
-  "model_provider": "MiniMax",
-  "model_weights_in_repository": false,
-  "getting_started": [
-    "Register your own account at https://superh3.com",
-    "Fund the account or buy a plan at https://superh3.com/pricing",
-    "Create your personal API Key in the account API page"
-  ],
   "api_base_url": "https://superh3.com/api/v1",
-  "openapi_url": "https://superh3.com/agents/openapi.json",
-  "live_price_source": "https://superh3.com/api/v1/catalog",
-  "snapshot_date": "2026-10-09",
-  "pricing": {
-    "currency": "CNY",
-    "money_unit": "microyuan",
-    "microyuan_per_cny": 1000000,
-    "billing_unit": "output_video_second",
-    "minimum_480p_rate_microyuan": 70000,
-    "eligible_plans": [
-      "Pro",
-      "企业 · 规模"
-    ],
-    "eligible_tiers": [
-      "Pro",
-      "Enterprise100"
-    ],
-    "usd_approximate_only": true,
-    "conditions": "480P on eligible plans only; plan purchase conditions apply; use the live account quote before generation."
-  },
-  "catalog_snapshot": [
-    {
-      "concurrency": 1,
-      "id": "2c9f13a5-6657-4c40-8ad7-5902adca9233",
-      "kind": "guest",
-      "local_test": false,
-      "price_cents": 0,
-      "rate1080": 200000,
-      "rate480": 100000,
-      "rate768": 130000,
-      "sku": "guest",
-      "space_bytes": null,
-      "tier": "GUEST",
-      "title": "自由充值",
-      "valid_days": 30,
-      "version": 2
-    },
-    {
-      "bonus_basis_points": 1111,
-      "concurrency": 2,
-      "discount_basis_points": 9000,
-      "gift_value_cents": 756,
-      "id": "d0ca6e3f-5640-4481-b300-14daf334eb34",
-      "kind": "monthly",
-      "local_test": false,
-      "price_cents": 6800,
-      "rate1080": 180000,
-      "rate480": 90000,
-      "rate768": 120000,
-      "reference_price_cents": 7556,
-      "sku": "lite",
-      "space_bytes": null,
-      "standard_rate1080": 200000,
-      "standard_rate480": 100000,
-      "standard_rate768": 130000,
-      "tier": "Lite",
-      "title": "Lite",
-      "valid_days": 30,
-      "version": 2
-    },
-    {
-      "bonus_basis_points": 1765,
-      "concurrency": 3,
-      "discount_basis_points": 8500,
-      "gift_value_cents": 3529,
-      "id": "c98328d0-ad2e-43ab-938f-9e467a3fb1a4",
-      "kind": "monthly",
-      "local_test": false,
-      "price_cents": 20000,
-      "rate1080": 170000,
-      "rate480": 80000,
-      "rate768": 110000,
-      "reference_price_cents": 23529,
-      "sku": "plus",
-      "space_bytes": null,
-      "standard_rate1080": 200000,
-      "standard_rate480": 100000,
-      "standard_rate768": 130000,
-      "tier": "Plus",
-      "title": "Plus",
-      "valid_days": 30,
-      "version": 2
-    },
-    {
-      "bonus_basis_points": 3333,
-      "concurrency": 5,
-      "discount_basis_points": 7500,
-      "gift_value_cents": 22000,
-      "id": "b3230856-561b-45b4-9b4a-248ee7a67882",
-      "kind": "monthly",
-      "local_test": false,
-      "price_cents": 66000,
-      "rate1080": 150000,
-      "rate480": 70000,
-      "rate768": 100000,
-      "reference_price_cents": 88000,
-      "sku": "pro",
-      "space_bytes": null,
-      "standard_rate1080": 200000,
-      "standard_rate480": 100000,
-      "standard_rate768": 130000,
-      "tier": "Pro",
-      "title": "Pro",
-      "valid_days": 30,
-      "version": 2
-    },
-    {
-      "bonus_basis_points": 1111,
-      "concurrency": 20,
-      "discount_basis_points": 9000,
-      "gift_value_cents": 22200,
-      "id": "c0025860-318d-4230-8636-7d05606ca4f2",
-      "kind": "enterprise",
-      "local_test": false,
-      "price_cents": 199800,
-      "rate1080": 180000,
-      "rate480": 90000,
-      "rate768": 120000,
-      "reference_price_cents": 222000,
-      "sku": "enterprise-1000",
-      "space_bytes": null,
-      "standard_rate1080": 200000,
-      "standard_rate480": 100000,
-      "standard_rate768": 130000,
-      "tier": "Enterprise20",
-      "title": "企业 · 入门",
-      "valid_days": 30,
-      "version": 2
-    },
-    {
-      "bonus_basis_points": 2500,
-      "concurrency": 40,
-      "discount_basis_points": 8000,
-      "gift_value_cents": 147200,
-      "id": "cd8b78b7-7eea-4910-997c-8074461c0483",
-      "kind": "enterprise",
-      "local_test": false,
-      "price_cents": 588800,
-      "rate1080": 160000,
-      "rate480": 80000,
-      "rate768": 110000,
-      "reference_price_cents": 736000,
-      "sku": "enterprise-5000",
-      "space_bytes": null,
-      "standard_rate1080": 200000,
-      "standard_rate480": 100000,
-      "standard_rate768": 130000,
-      "tier": "Enterprise40",
-      "title": "企业 · 成长",
-      "valid_days": 30,
-      "version": 2
-    },
-    {
-      "bonus_basis_points": 4286,
-      "concurrency": 100,
-      "discount_basis_points": 7000,
-      "gift_value_cents": 428486,
-      "id": "0ad8d51c-cda0-4299-8ba3-5fa0e9f589dd",
-      "kind": "enterprise",
-      "local_test": false,
-      "price_cents": 999800,
-      "rate1080": 140000,
-      "rate480": 70000,
-      "rate768": 90000,
-      "reference_price_cents": 1428286,
-      "sku": "enterprise-10000",
-      "space_bytes": null,
-      "standard_rate1080": 200000,
-      "standard_rate480": 100000,
-      "standard_rate768": 130000,
-      "tier": "Enterprise100",
-      "title": "企业 · 规模",
-      "valid_days": 30,
-      "version": 2
-    }
-  ],
-  "reference_timings": {
-    "output_seconds": 15,
-    "processing_seconds": {
-      "1080": 30,
-      "768": 20,
-      "480": 10
-    },
-    "source": "operator_reported",
-    "independent_benchmark": false,
-    "conditions": "Actual time varies with content, queue and service load."
-  },
+  "brand": "SuperH3",
   "capabilities": {
-    "modes": [
-      "text",
+    "aspects": [
+      "16:9",
+      "9:16",
+      "1:1",
+      "4:3",
+      "3:4",
+      "21:9"
+    ],
+    "compatibility_aliases": {
+      "image": "reference"
+    },
+    "concurrency": 100,
+    "dispatch_policy": "queued_when_busy",
+    "duration_range": {
+      "api_step": 1,
+      "maximum": 15,
+      "minimum": 4,
+      "web_step": 1
+    },
+    "generation_type": "ref2va",
+    "local_queue": true,
+    "model": "superh3",
+    "reference_kinds": [
       "image",
-      "frames",
-      "reference"
+      "audio"
+    ],
+    "reference_limits": {
+      "audio": 3,
+      "audio_min_seconds": 2,
+      "audio_total_seconds": 15,
+      "image": 9,
+      "total": 12,
+      "video": 0
+    },
+    "reference_only": true,
+    "require_reference": true,
+    "reserved_modes": [
+      "text",
+      "frames"
     ],
     "resolutions": [
-      "480",
       "768",
       "1080"
     ],
-    "output_seconds": {
-      "minimum": 5,
-      "maximum": 15
-    },
-    "availability_source": "https://superh3.com/api/v1/config"
+    "seconds": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "single_image_semantics": "reference_not_fixed_first_frame",
+    "version": "a11b5b36c4709dfc9ea7631a97a64c670dcc5b33bcf96000ee317e6b41271b0a"
   },
-  "suitable_for": [
-    "Short video prototyping",
-    "Text-to-video and image-to-video workflows",
-    "Agents with authorized HTTP or local MCP tools",
-    "CNY cost-aware generation"
+  "catalog_snapshot": [
+    {
+      "concurrency": 100,
+      "id": "725e6ef6-6daf-4252-83f1-a1077f3e4445",
+      "kind": "guest",
+      "local_test": false,
+      "price_cents": 0,
+      "rate1080": 100000,
+      "rate768": 50000,
+      "sku": "guest",
+      "space_bytes": null,
+      "tier": "Member",
+      "title": "自由充值",
+      "valid_days": 0,
+      "version": 4
+    }
+  ],
+  "description_en": "Only all-in-one reference mode (Ref2VA) is available: 1–9 images and up to 3 optional audio clips totaling at most 15 seconds. No video references. Choose 768P or 1080P, six aspect ratios and 4–15 whole seconds on both web and API. Read the effective account concurrency from GET /config generation_constraints.concurrency; confirm the live quote. Text-only and first/last-frame modes are reserved and unavailable. Tasks report actual status; unavailable progress and timings remain null.",
+  "description_zh": "当前仅开放全能参考（Ref2VA）：1–9 张图片，可附加最多 3 段音频，音频合计不超过 15 秒；不支持视频参考。768P、1080P，6 种画幅，网页与 API 均为 4–15 秒整数。每账号并发以 GET /config 的 generation_constraints.concurrency 为准；价格以实时确认报价为准。文生与首尾帧模式已预留，尚未开放。任务显示实际状态，未提供的进度和耗时为 null，不编造百分比。",
+  "getting_started": [
+    "Register at https://superh3.com",
+    "Recharge at https://superh3.com/pricing; minimum CNY 5, Alipay",
+    "Create one personal API Key for video and optional prompt assistance"
   ],
   "limitations": [
     "Paid service; own account and key required",
     "Not an offline model download",
     "No guaranteed generation deadline",
     "No guaranteed search ranking or AI recommendation",
-    "Local stdio MCP requires client installation/configuration; not a hosted MCP URL"
+    "Local stdio MCP requires client installation/configuration; not a hosted MCP URL",
+    "No text-only, fixed-first-frame I2VA or first/last-frame control; single images use Ref2VA."
   ],
+  "links": {
+    "agent_kit": "https://superh3.com/agents/",
+    "developers": "https://superh3.com/developers",
+    "github": "https://github.com/noahzjw888-debug/superh3-api-examples",
+    "hugging_face": "https://huggingface.co/spaces/Noahjson/SuperH3-MiniMax-H3-API",
+    "llms": "https://superh3.com/llms.txt",
+    "pricing": "https://superh3.com/pricing",
+    "terms": "https://superh3.com/terms"
+  },
+  "live_price_source": "https://superh3.com/api/v1/catalog",
   "mcp": {
-    "transport": "stdio",
+    "dependencies": "standard library only",
     "entrypoint": "superh3_mcp.py",
     "python": "3.9+",
-    "dependencies": "standard library only",
     "remote_endpoint": null,
     "tool_names": [
       "superh3_service_info",
@@ -246,15 +118,65 @@
       "superh3_submit",
       "superh3_status",
       "superh3_download"
-    ]
+    ],
+    "transport": "stdio"
   },
-  "links": {
-    "pricing": "https://superh3.com/pricing",
-    "developers": "https://superh3.com/developers",
-    "agent_kit": "https://superh3.com/agents/",
-    "llms": "https://superh3.com/llms.txt",
-    "github": "https://github.com/noahzjw888-debug/superh3-api-examples",
-    "hugging_face": "https://huggingface.co/spaces/Noahjson/SuperH3-MiniMax-H3-API",
-    "terms": "https://superh3.com/terms"
-  }
+  "model": "superh3",
+  "model_weights_in_repository": false,
+  "openapi_url": "https://superh3.com/agents/openapi.json",
+  "pricing": {
+    "billing_unit": "output_video_second",
+    "conditions": "All registered members share one rate. Always use the current quote; processing time is not billable.",
+    "currency": "CNY",
+    "eligible_plans": [
+      "自由充值"
+    ],
+    "eligible_tiers": [
+      "Member"
+    ],
+    "microyuan_per_cny": 1000000,
+    "minimum_rate_cny": "0.05",
+    "minimum_rate_microyuan": 50000,
+    "minimum_resolution": "768",
+    "money_unit": "microyuan",
+    "rates_microyuan": {
+      "1080": 100000,
+      "768": 50000
+    }
+  },
+  "pricing_source": "dated_public_snapshot; refresh live /config and /catalog before use",
+  "prompt_assistant": {
+    "account_concurrency": 1,
+    "default_enabled": false,
+    "enabled": true,
+    "global_concurrency": 16,
+    "max_images": 9,
+    "name": "H3 Ref2VA 提示词助手",
+    "price_microyuan": 30000,
+    "queue_enabled": true,
+    "requires_explicit_user_authorization": true,
+    "type": "prompt_writing_agent",
+    "same_api_key": true,
+    "currency": "CNY",
+    "billing_unit": "request",
+    "create_path": "/prompt-assists",
+    "status_path": "/prompt-assists/{id}",
+    "automatic_video_generation": false
+  },
+  "reference_timings": {
+    "fixed_completion_seconds": null,
+    "note": "No current latency benchmark is published. Read actual task status; output duration is not processing time."
+  },
+  "retention_policy": "Download completed videos and save prompt-assistance text within the 15-minute retention period shown on the receipt.",
+  "schema_version": "2.0",
+  "service_operator": "SuperH3",
+  "snapshot_date": "2026-11-16",
+  "suitable_for": [
+    "Short video prototyping",
+    "Reference-guided video workflows (Ref2VA), including a single reference image",
+    "Agents with authorized HTTP or local MCP tools",
+    "CNY cost-aware generation"
+  ],
+  "website": "https://superh3.com",
+  "snapshot_timezone": "Asia/Shanghai"
 }
