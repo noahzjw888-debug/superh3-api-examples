@@ -45,9 +45,9 @@ class ContractHandler(BaseHTTPRequestHandler):
         body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))))
         self.events.append(("POST", self.path, body))
         if self.path.endswith("/quotes/estimate"):
-            self.send({"cost": 500000, "currency": "CNY", "card_uses": 0, "estimate_only": True, "generation_mode": "simulation"})
+            self.send({"cost": 500000, "currency": "CREDITS", "card_uses": 0, "estimate_only": True, "generation_mode": "simulation"})
         elif self.path.endswith("/quotes"):
-            self.send({"cost": 500000, "currency": "CNY", "card_uses": 0, "quote_token": "MOCK_QUOTE_NOT_A_CREDENTIAL", "generation_mode": "simulation"})
+            self.send({"cost": 500000, "currency": "CREDITS", "card_uses": 0, "quote_token": "MOCK_QUOTE_NOT_A_CREDENTIAL", "generation_mode": "simulation"})
         elif self.path.endswith("/generations"):
             if body.get("quote_token") != "MOCK_QUOTE_NOT_A_CREDENTIAL":
                 self.send({"error": {"code": "quote_changed", "message": "Get a fresh quote"}}, 409)
@@ -134,7 +134,7 @@ class AgentKitTests(unittest.TestCase):
             def call(name, arguments):
                 return server.handle({"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "superh3_" + name, "arguments": arguments}})
             receipt = call("quote", {"request": self.payload})["result"]["structuredContent"]
-            confirm = {"request_id": receipt["request_id"], "confirmed_cost_microyuan": 500000, "confirmed_card_uses": 0, "user_authorized": True}
+            confirm = {"request_id": receipt["request_id"], "confirmed_cost_microcredits": 500000, "confirmed_card_uses": 0, "user_authorized": True}
             self.assertIn("error", call("submit", {**confirm, "user_authorized": False}))
             self.assertFalse(call("submit", confirm)["result"]["isError"])
             server.client = self.client

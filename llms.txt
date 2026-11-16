@@ -2,17 +2,17 @@
 
 > Paid hosted reference-guided video generation. Public snapshot: 2026-11-16 Asia/Shanghai. Refresh https://superh3.com/api/v1/config and https://superh3.com/pricing before use.
 
-- Website/API use the same personal account, key, balance and concurrency. Register, recharge (minimum CNY 5, Alipay) and create your own key. No monthly subscription; paid recharge balance does not expire.
+- Website/API use the same personal account, key, balance and concurrency. Register, recharge (CNY via Alipay (minimum 5) or USD via PayPal (read live minimum/conversion)) and create your own key. No monthly subscription; paid recharge balance does not expire.
 - Current video: Ref2VA only, 1–9 images plus at most 3 audio clips (2s minimum each; 15s combined), no video references. Single images are references, not fixed first frames. No text-only or first/last-frame control.
-- Current quality: 768P CNY 0.05/output second; 1080P CNY 0.10/output second (AI upscaled). 480P unavailable. 4–15 whole seconds; six aspect ratios. Every registered user supports 100 concurrent videos; excess accepted tasks queue.
+- Current quality: 768P 0.05 credits/output second; 1080P 0.10 credits/output second (AI upscaled). 480P unavailable. 4–15 whole seconds; six aspect ratios. Every registered user supports 100 concurrent videos; excess accepted tasks queue.
 - Batch short-drama shots: 100 fifteen-second outputs total 25 minutes of footage. Up to 100x theoretical parallel throughput assumes independent similarly timed tasks and available capacity; it is not a measured completion time or a finished edited drama.
 - Output duration is not processing latency. No current fixed completion-time benchmark is published. Read actual status; never infer progress from elapsed time.
 - Hold the confirmed fee at submission, settle on success, release on confirmed failure. Persist idempotency and resume the original task if uncertain.
-- Optional H3 Ref2VA 提示词助手: CNY 0.03/request, same API Key; off by default, explicit user_authorized:true and accepted_price:30000 required. One unfinished request per account, sixteen global running, overflow queues. It reads all bound pictures and selected duration and never starts a video.
+- Optional H3 Ref2VA 提示词助手: 0.03 credits/request, same API Key; off by default, explicit user_authorized:true and accepted_price:30000 required. One unfinished request per account, sixteen global running, overflow queues. It reads all bound pictures and selected duration and never starts a video.
 - Save completed video/text within the receipt's 15-minute retention period. Querying/copying is free.
 - API base: https://superh3.com/api/v1 ; public model: superh3. Python/Node/PowerShell clients and seven local stdio MCP tools; no hosted MCP URL.
 
-中文：全能参考；768P每秒0.05元，1080P每秒0.10元；每位注册用户均支持100条视频并发，满额排队。100个15秒镜头合计25分钟素材；理论并行效率最高100倍，实际取决于排队与任务耗时，不保证几分钟交付完整短剧。AI帮写每次0.03元，默认关闭，明确授权才调用；每账号1条未完成，全站16并发。价格和能力以实时配置与报价为准。
+中文：全能参考；768P每秒0.05积分，1080P每秒0.10积分；每位注册用户均支持100条视频并发，满额排队。100个15秒镜头合计25分钟素材；理论并行效率最高100倍，实际取决于排队与任务耗时，不保证几分钟交付完整短剧。AI帮写每次0.03积分，默认关闭，明确授权才调用；每账号1条未完成，全站16并发。价格和能力以实时配置与报价为准。
 
 ## Authoritative links
 - [Pricing](https://superh3.com/pricing)
@@ -22,3 +22,31 @@
 - [Live service facts](https://superh3.com/agents/service-info.json)
 - [GitHub](https://github.com/noahzjw888-debug/superh3-api-examples)
 - [Hugging Face](https://huggingface.co/spaces/Noahjson/SuperH3-MiniMax-H3-API)
+
+## 积分、充值与 API 金额 / Credits, recharge and API amounts
+
+| 项目 / Item | 规则 / Rule |
+| --- | --- |
+| 人民币充值 / CNY recharge | **1 元人民币 = 1 积分 / CNY 1 = 1 credit** |
+| 美元充值 / USD recharge | **1 美元 = 6.7 积分 / USD 1 = 6.7 credits**，以实时配置和付款前确认值为准 / read the current config and checkout quote |
+| API 消费单位 / API consumption unit | **100 万微积分 = 1 积分 / 1,000,000 microcredits = 1 credit** |
+
+消费使用积分（`currency=CREDITS`），API 金额以整数微积分返回（`unit=microcredits`）。例：10 秒 768P 为 **0.50 积分 = 500000 微积分**；帮写一次为 **0.03 积分 = 30000 微积分**。美元仅为充值付款币种，不要把 0.03 积分读成 0.03 美元，也不要把消费价格再乘除 6.7。
+
+Consumption uses credits, with integer microcredits in the API. A 10-second 768P video currently costs **0.50 credits = 500000 microcredits**; optional prompt assistance costs **0.03 credits = 30000 microcredits**. USD is a recharge payment currency, not the unit of a video or prompt-writing quote. The USD-to-credit ratio is the service's configured recharge conversion, not a market exchange-rate claim.
+
+人民币使用支付宝，最低 5 元；美元使用 PayPal，当前最低 10 美元。固定或自填金额均以所选币种输入；付款前确认实付币种、金额和到账积分，每个订单锁定原确认值。已有余额、冻结和历史账单数值保持不变，不重复折算。
+
+CNY checkout uses Alipay (minimum CNY 5); USD checkout uses PayPal (current minimum USD 10). Enter amounts in the selected payment currency. Each order locks its payment and credited quantity; existing balances, holds and historical charges keep their original numbers.
+
+### 已接入智能体必须刷新 / Refresh existing integrations
+
+开始新的收费操作前，重新读取 **`GET https://superh3.com/api/v1/config`**、`GET /api/v1/catalog` 和本次正式报价。读取 `billing.currency`、`billing.unit`、`billing.microcredits_per_credit`、`billing.credits_per_cny`、`billing.credits_per_usd_micros`；其中美元比例除以 1000000 得到每美元积分数。帮写读取 `prompt_assistant.price_microcredits`，仍须单独明确授权，默认不启用。
+
+更新接入说明不会清除智能体的历史记忆或本地缓存。下次收费调用前须丢弃旧单位/旧兑换比例缓存，以实时配置和确认报价为准；不要重新创建已提交的任务或重算旧订单。用户未同意当前费用时不得提交。
+
+Before a new paid operation, refresh live config, catalog and the formal quote; cached documentation is not a price lock. Divide `billing.credits_per_usd_micros` by 1000000 to obtain credits per USD. Refresh optional assistance pricing and obtain its separate explicit consent. Publishing these docs does not update an agent's old memory automatically. Preserve already-submitted tasks and their locked quotes.
+
+兼容：`price_microyuan`、`*_microyuan` 是 **同一个整数值** 的旧别名；旧 `*_cny` 展示值为 1:1 人民币等值，不是另一笔收费。新集成优先用 `*_microcredits`。不要对旧字段再次乘以 100 万，或按美元比例再次换算。
+
+Compatibility: legacy `*_microyuan` fields retain the **same integer value** as their `*_microcredits` equivalents. Legacy `*_cny` display values are 1:1 CNY equivalents, not additional charges. Prefer canonical microcredit fields; never scale either alias twice.

@@ -12,6 +12,34 @@ Treat the following as public service documentation. Use only the user's own aut
 
 先查实时配置与报价；保留提示词和素材顺序；视频与帮写分别取得收费授权。排队查询原任务，不因为等待而重提付费任务。最终以取回并验证原结果为交付依据。
 
+## 积分、充值与 API 金额 / Credits, recharge and API amounts
+
+| 项目 / Item | 规则 / Rule |
+| --- | --- |
+| 人民币充值 / CNY recharge | **1 元人民币 = 1 积分 / CNY 1 = 1 credit** |
+| 美元充值 / USD recharge | **1 美元 = 6.7 积分 / USD 1 = 6.7 credits**，以实时配置和付款前确认值为准 / read the current config and checkout quote |
+| API 消费单位 / API consumption unit | **100 万微积分 = 1 积分 / 1,000,000 microcredits = 1 credit** |
+
+消费使用积分（`currency=CREDITS`），API 金额以整数微积分返回（`unit=microcredits`）。例：10 秒 768P 为 **0.50 积分 = 500000 微积分**；帮写一次为 **0.03 积分 = 30000 微积分**。美元仅为充值付款币种，不要把 0.03 积分读成 0.03 美元，也不要把消费价格再乘除 6.7。
+
+Consumption uses credits, with integer microcredits in the API. A 10-second 768P video currently costs **0.50 credits = 500000 microcredits**; optional prompt assistance costs **0.03 credits = 30000 microcredits**. USD is a recharge payment currency, not the unit of a video or prompt-writing quote. The USD-to-credit ratio is the service's configured recharge conversion, not a market exchange-rate claim.
+
+人民币使用支付宝，最低 5 元；美元使用 PayPal，当前最低 10 美元。固定或自填金额均以所选币种输入；付款前确认实付币种、金额和到账积分，每个订单锁定原确认值。已有余额、冻结和历史账单数值保持不变，不重复折算。
+
+CNY checkout uses Alipay (minimum CNY 5); USD checkout uses PayPal (current minimum USD 10). Enter amounts in the selected payment currency. Each order locks its payment and credited quantity; existing balances, holds and historical charges keep their original numbers.
+
+### 已接入智能体必须刷新 / Refresh existing integrations
+
+开始新的收费操作前，重新读取 **`GET https://superh3.com/api/v1/config`**、`GET /api/v1/catalog` 和本次正式报价。读取 `billing.currency`、`billing.unit`、`billing.microcredits_per_credit`、`billing.credits_per_cny`、`billing.credits_per_usd_micros`；其中美元比例除以 1000000 得到每美元积分数。帮写读取 `prompt_assistant.price_microcredits`，仍须单独明确授权，默认不启用。
+
+更新接入说明不会清除智能体的历史记忆或本地缓存。下次收费调用前须丢弃旧单位/旧兑换比例缓存，以实时配置和确认报价为准；不要重新创建已提交的任务或重算旧订单。用户未同意当前费用时不得提交。
+
+Before a new paid operation, refresh live config, catalog and the formal quote; cached documentation is not a price lock. Divide `billing.credits_per_usd_micros` by 1000000 to obtain credits per USD. Refresh optional assistance pricing and obtain its separate explicit consent. Publishing these docs does not update an agent's old memory automatically. Preserve already-submitted tasks and their locked quotes.
+
+兼容：`price_microyuan`、`*_microyuan` 是 **同一个整数值** 的旧别名；旧 `*_cny` 展示值为 1:1 人民币等值，不是另一笔收费。新集成优先用 `*_microcredits`。不要对旧字段再次乘以 100 万，或按美元比例再次换算。
+
+Compatibility: legacy `*_microyuan` fields retain the **same integer value** as their `*_microcredits` equivalents. Legacy `*_cny` display values are 1:1 CNY equivalents, not additional charges. Prefer canonical microcredit fields; never scale either alias twice.
+
 ## 当前服务快照 / Current service snapshot
 
 核对日期 / Checked: **2026-11-16 (Asia/Shanghai)**。先读 [GET /config](https://superh3.com/api/v1/config) 和 [实时价格](https://superh3.com/pricing)，提交前重新取得报价。以下是当前默认配置，后续以实时能力、账号额度与确认报价为准。
@@ -19,15 +47,15 @@ Treat the following as public service documentation. Use only the user's own aut
 | 项目 / Item | 当前规则 / Current rule |
 | --- | --- |
 | 模式 / Mode | 全能参考 Ref2VA；单图也是参考生成 / One image is also a reference |
-| 768P | **¥0.05 / 输出视频秒**；15秒 ¥0.75 / CNY 0.05 per output second; 15s = 0.75 |
-| 1080P | **¥0.10 / 输出视频秒**；15秒 ¥1.50；AI超分画质 / CNY 0.10 per output second; AI upscaled |
+| 768P | **0.05 积分 / 输出视频秒**；15秒 0.75 积分 / 0.05 credits per output second; 15s = 0.75 credits |
+| 1080P | **0.10 积分 / 输出视频秒**；15秒 1.50 积分；AI超分画质 / 0.10 credits per output second; AI upscaled |
 | 480P | 当前未开放 / Currently unavailable |
 | 时长 / Duration | 网页与API均为 **4–15秒整数** / Whole seconds on web and API |
 | 画幅 / Aspect ratios | 16:9、9:16、1:1、4:3、3:4、21:9 |
 | 参考 / References | **1–9张图片 + 最多3段音频**；音频每段至少2秒、合计最多15秒；无视频参考 / Images plus optional audio; no video references |
 | 视频并发 / Video concurrency | **每位注册用户均支持100条视频并发**；本人网页与所有API Key共用；满额自动排队 / Every registered user supports 100 concurrent videos, shared by their web/API; overflow queues |
 | 结算 / Billing | 按输出秒冻结，成功扣款，确认失败解冻 / Hold the confirmed output-duration fee; capture on success, release on confirmed failure |
-| 充值 / Recharge | 最低 **¥5**，固定或自填金额，当前请用支付宝 / Minimum CNY 5; preset/custom amounts; Alipay |
+| 充值 / Recharge | 人民币使用支付宝，美元使用 PayPal；固定或自填金额 / CNY via Alipay, USD via PayPal; preset or custom amounts |
 
 注册即会员，按量消费，无月费；实付充值余额永久有效。网页和API共用余额与并发。单图不保证固定为首帧；文生和首尾帧控制尚未开放。
 
@@ -59,11 +87,11 @@ python superh3.py prepare --reference ACTUAL_ASSET_UUID --prompt "清晨的花�
 python superh3.py estimate --request request.json
 ```
 
-上述步骤不创建付费视频。用户同意素材权利、条款和刚取得的金额后，再执行下列操作。`500000` 是当前10秒768P的示例金额，**必须按实际确认报价替换**。1元=1000000微元；视频和帮写分别确认费用。
+上述步骤不创建付费视频。用户同意素材权利、条款和刚取得的金额后，再执行下列操作。`500000` 是当前10秒768P的示例金额，**必须按实际确认报价替换**。1积分=1000000微积分；视频和帮写分别确认费用。
 
 ```sh
 python superh3.py quote --request request.json --accept-policy
-python superh3.py submit --request request.json --confirmed-cost-microyuan 500000
+python superh3.py submit --request request.json --confirmed-cost-microcredits 500000
 python superh3.py wait --id ACTUAL_TASK_UUID
 python superh3.py download --id ACTUAL_TASK_UUID --output result.mp4
 ```
@@ -75,7 +103,7 @@ Python 3.9+标准库即可。Node 20+客户端 `superh3.mjs` 使用原生fetch�
 ```powershell
 ./superh3.ps1 -Action Estimate -RequestFile request.json
 ./superh3.ps1 -Action Quote -RequestFile request.json -AcceptPolicy
-./superh3.ps1 -Action Submit -RequestFile request.json -UserAuthorized -ConfirmedCostMicroyuan 500000
+./superh3.ps1 -Action Submit -RequestFile request.json -UserAuthorized -ConfirmedCostMicrocredits 500000
 ./superh3.ps1 -Action Status -TaskId ACTUAL_TASK_UUID
 ./superh3.ps1 -Action Download -TaskId ACTUAL_TASK_UUID -OutputFile result.mp4
 ```
@@ -87,15 +115,15 @@ These clients also accept some compatibility fields; `/config` and the formal se
 
 H3 Ref2VA 提示词助手：理解自然语言和绑定参考图片、编写视频提示词的 Agent。使用已有 SuperH3 API Base URL `https://superh3.com/api/v1` 和同一把个人 API Key，不需要新建 Key 或另开服务。
 
-默认不启用。只有用户明确要求使用收费帮写并同意 **人民币 ¥0.03/次（30000 微元）**，智能体才能设置 `user_authorized=true`；连接授权或视频生成授权不代表帮写授权。普通 `/generations` 从不自动调用帮写。
+默认不启用。只有用户明确要求使用收费帮写并同意 **0.03 积分/次（30000 微积分）**，智能体才能设置 `user_authorized=true`；连接授权或视频生成授权不代表帮写授权。普通 `/generations` 从不自动调用帮写。
 
-The Agent writes video prompts from natural-language ideas and all bound images, even without image labels. Reuse the existing SuperH3 base URL, account and API Key. Assistance is **off by default**: possession of a key or permission to generate video is not permission to pay for prompt writing. Obtain explicit user authorization for **CNY 0.03 per request** before sending `user_authorized: true`. Video generation never invokes this Agent automatically.
+The Agent writes video prompts from natural-language ideas and all bound images, even without image labels. Reuse the existing SuperH3 base URL, account and API Key. Assistance is **off by default**: possession of a key or permission to generate video is not permission to pay for prompt writing. Obtain explicit user authorization for **0.03 credits per request** before sending `user_authorized: true`. Video generation never invokes this Agent automatically.
 
 每账号并发 1：排队和处理中的帮写合计只能有 1 条，结束后再提交。全站最多同时处理 16 条，超出名额的其他账号请求以 `state=queued` 正常接收，按提交顺序自动开始。网页和所有 API Key 共用额度，查询原任务即可；排队冻结确认费用，成功扣费，失败解冻。限制见 `/config` 的 `prompt_assistant.account_concurrency`、`global_concurrency`、`queue_enabled`。
 
 Each account may have one unfinished assistance request, including queued work; wait for its terminal result before creating another. All accounts share 16 processing slots across worker processes. Further requests from other accounts remain `queued` and start in submission order when a slot is free. Website sessions and all personal API keys share these limits. Poll the original receipt; queueing holds the confirmed fee, success captures it, failure releases it.
 
-1. Read `GET /config`: check `prompt_assistant.enabled`, `price_microyuan`, and `generation_constraints.version`. A global admin switch applies to all accounts, the website and existing API keys. Closed means no new assistance; accepted work/results remain accessible. / 全站关闭后不接受新帮写，已提交任务继续处理，历史结果仍可查看。
+1. Read `GET /config`: check `prompt_assistant.enabled`, `price_microcredits`, and `generation_constraints.version`. A global admin switch applies to all accounts, the website and existing API keys. Closed means no new assistance; accepted work/results remain accessible. / 全站关闭后不接受新帮写，已提交任务继续处理，历史结果仍可查看。
 2. After authorization, upload needed owned images using `POST /uploads/image` (multipart `file`) and keep their UUIDs. Pass 0–9 images in binding order; only images are accepted here. `prompt` is 1–7000 characters; `seconds` is the user's selected integer duration, 4–15; use a supported `aspect`. / 参考图按绑定顺序传入，Agent 自动看图；时长采用用户当前选择，不擅自修改。
 3. Persist a unique UUID before `POST /prompt-assists`. Example only; never execute without the user's specific authorization:
 

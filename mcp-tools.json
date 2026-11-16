@@ -18,7 +18,7 @@
     },
     {
       "name": "superh3_account",
-      "description": "Read the user's SuperH3 account balance (integer microyuan), membership and concurrency. No charge.",
+      "description": "Read the user's SuperH3 account balance (integer microcredits), membership and concurrency. No charge.",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -47,15 +47,16 @@
           "resolution": {
             "type": "string",
             "enum": [
+              "480",
               "768",
               "1080"
             ]
           },
           "seconds": {
-            "type": "integer",
+            "type": "number",
             "minimum": 4,
             "maximum": 15,
-            "multipleOf": 1
+            "multipleOf": 0.01
           },
           "card_id": {
             "type": "string",
@@ -100,25 +101,30 @@
               "resolution": {
                 "type": "string",
                 "enum": [
+                  "480",
                   "768",
                   "1080"
                 ]
               },
               "seconds": {
-                "type": "integer",
+                "type": "number",
                 "minimum": 4,
                 "maximum": 15,
-                "multipleOf": 1
+                "multipleOf": 0.01
               },
               "aspect": {
                 "type": "string",
                 "enum": [
+                  "adaptive",
                   "16:9",
                   "9:16",
                   "1:1",
                   "4:3",
                   "3:4",
-                  "21:9"
+                  "3:2",
+                  "2:3",
+                  "21:9",
+                  "9:21"
                 ]
               },
               "references": {
@@ -172,7 +178,7 @@
     },
     {
       "name": "superh3_submit",
-      "description": "PAID ACTION. Submit an existing saved quote only after the user authorized this request, exact CNY cost and card usage. Reuse request_id on retry. Never create a replacement for submission_unknown. Returns task ID, not a finished video.",
+      "description": "PAID ACTION. Submit an existing saved quote only after the user authorized this request, exact credit cost and card usage. Reuse request_id on retry. Never create a replacement for submission_unknown. Returns task ID, not a finished video.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -180,9 +186,14 @@
             "type": "string",
             "format": "uuid"
           },
-          "confirmed_cost_microyuan": {
+          "confirmed_cost_microcredits": {
             "type": "integer",
             "minimum": 0
+          },
+          "confirmed_cost_microyuan": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Deprecated numeric alias of confirmed_cost_microcredits"
           },
           "confirmed_card_uses": {
             "type": "integer",
@@ -198,7 +209,6 @@
         },
         "required": [
           "request_id",
-          "confirmed_cost_microyuan",
           "confirmed_card_uses",
           "user_authorized"
         ],

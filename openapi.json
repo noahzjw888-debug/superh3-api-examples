@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "SuperH3 Video API",
-    "version": "2.3.0",
-    "description": "Agent integration subset of existing REST API. Own account/key. Prices use integer microyuan. See developers for full media limits. Ref2VA reference generation only, including single-image requests; not fixed-first-frame I2VA. Legacy image + first_frame requests are normalized to reference. Public snapshot 2026-11-16. Always read live configuration and obtain separate authorization for optional prompt writing."
+    "version": "2.4.0",
+    "description": "Public SuperH3 video and optional H3 Ref2VA prompt-Agent API. Consumption currency=CREDITS, unit=microcredits; 1 credit=1000000 microcredits. Recharge CNY 1=1 credit; USD conversion is billing.credits_per_usd_micros/1000000 in GET /config. Refresh live config, catalog and the formal quote before every new paid operation. Legacy microyuan fields are identical integer aliases, not another currency. Prompt assistance is off by default and requires separate explicit paid consent. Ref2VA reference generation only; read live capabilities and owned task receipts."
   },
   "servers": [
     {
@@ -74,7 +74,7 @@
           "accepted_price": {
             "type": "integer",
             "const": 30000,
-            "description": "Confirmed microyuan; current CNY 0.03 per request"
+            "description": "Confirmed microcredits; current 0.03 credits per request"
           },
           "user_authorized": {
             "type": "boolean",
@@ -108,7 +108,7 @@
           },
           "cost": {
             "type": "integer",
-            "description": "Locked original price in microyuan"
+            "description": "Locked original price in microcredits"
           },
           "charged": {
             "type": "boolean"
@@ -168,13 +168,39 @@
             "format": "date-time"
           }
         }
+      },
+      "CreditBilling": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "const": "CREDITS"
+          },
+          "unit": {
+            "type": "string",
+            "const": "microcredits"
+          },
+          "microcredits_per_credit": {
+            "type": "integer",
+            "const": 1000000
+          },
+          "credits_per_cny": {
+            "type": "integer",
+            "const": 1
+          },
+          "credits_per_usd_micros": {
+            "type": "integer",
+            "example": 6700000,
+            "description": "Live recharge ratio multiplied by 1000000. 6700000 means USD 1 buys 6.7 credits. Not the unit of consumption prices."
+          }
+        }
       }
     }
   },
   "paths": {
     "/catalog": {
       "get": {
-        "summary": "Public live tier prices; rates are microyuan per output second",
+        "summary": "Public live tier prices; rates are microcredits per output second",
         "operationId": "get_catalog",
         "responses": {
           "200": {
@@ -227,7 +253,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "type": "object",
+                  "properties": {
+                    "billing": {
+                      "$ref": "#/components/schemas/CreditBilling"
+                    }
+                  }
                 }
               }
             }
@@ -259,12 +290,13 @@
             }
           }
         },
-        "security": []
+        "security": [],
+        "description": "Refresh before new paid operations. A previously cached guide does not automatically change. Current billing, capability and payment settings take precedence; obtain the formal quote and explicit user consent."
       }
     },
     "/me": {
       "get": {
-        "summary": "Account, available/held microyuan, tier and concurrency",
+        "summary": "Account, available/held microcredits, tier and concurrency",
         "operationId": "get_me",
         "responses": {
           "200": {
@@ -327,12 +359,12 @@
                     "cost": {
                       "type": "integer",
                       "minimum": 0,
-                      "description": "Integer microyuan; 1 CNY = 1000000 microyuan"
+                      "description": "Integer microcredits; 1 credit = 1000000 microcredits"
                     },
                     "currency": {
                       "type": "string",
                       "enum": [
-                        "CNY"
+                        "CREDITS"
                       ]
                     },
                     "card_uses": {
@@ -363,6 +395,16 @@
                       "items": {
                         "type": "object"
                       }
+                    },
+                    "unit": {
+                      "type": "string",
+                      "enum": [
+                        "microcredits"
+                      ]
+                    },
+                    "microcredits_per_credit": {
+                      "type": "integer",
+                      "const": 1000000
                     }
                   }
                 }
@@ -461,12 +503,12 @@
                     "cost": {
                       "type": "integer",
                       "minimum": 0,
-                      "description": "Integer microyuan; 1 CNY = 1000000 microyuan"
+                      "description": "Integer microcredits; 1 credit = 1000000 microcredits"
                     },
                     "currency": {
                       "type": "string",
                       "enum": [
-                        "CNY"
+                        "CREDITS"
                       ]
                     },
                     "card_uses": {
@@ -497,6 +539,16 @@
                       "items": {
                         "type": "object"
                       }
+                    },
+                    "unit": {
+                      "type": "string",
+                      "enum": [
+                        "microcredits"
+                      ]
+                    },
+                    "microcredits_per_credit": {
+                      "type": "integer",
+                      "const": 1000000
                     }
                   }
                 }
@@ -1181,7 +1233,7 @@
     },
     "/prompt-assists": {
       "post": {
-        "summary": "H3 Ref2VA 提示词助手 · optional CNY 0.03 per request; explicit consent required",
+        "summary": "H3 Ref2VA 提示词助手 · optional 0.03 credits per request; explicit consent required",
         "description": "Same existing personal API Key and shared wallet. Prompt writing is off by default; never starts video generation. See /developers for consent and billing. One unfinished request per account (including queued work). All accounts share 16 processing slots; overflow remains queued in submission order. Website and API keys share these limits.",
         "responses": {
           "200": {

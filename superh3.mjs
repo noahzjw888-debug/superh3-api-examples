@@ -17,7 +17,7 @@ export class SuperH3 {
   async response(method, path, payload, isPublic = false) {
     if (!path.startsWith('/') || path.includes('..') || path.includes('?')) throw new Error('Invalid API path.');
     if (!isPublic && (!this.key || this.key.startsWith('YOUR_'))) throw new Error('Configure your own SUPERH3_API_KEY.');
-    const headers = { Accept: 'application/json', 'User-Agent': 'superh3-agent-kit/2.0.0' };
+    const headers = { Accept: 'application/json', 'User-Agent': 'superh3-agent-kit/2.4.0' };
     if (!isPublic) headers.Authorization = `Bearer ${this.key}`;
     if (payload !== undefined) headers['Content-Type'] = 'application/json';
     let res;
@@ -39,12 +39,13 @@ export class SuperH3 {
   async quote(request) {
     if (request.accepted_policy !== true) throw new Error('User must accept terms and input rights.');
     const quote = await this.request('POST', '/quotes', request);
-    if (!Number.isSafeInteger(quote.cost) || quote.cost < 0 || quote.currency !== 'CNY' || !quote.quote_token) throw new Error('Invalid quote.');
+    if (!Number.isSafeInteger(quote.cost) || quote.cost < 0 || !['CREDITS','CNY'].includes(quote.currency) || !quote.quote_token) throw new Error('Invalid quote.');
     return quote;
   }
-  submit(request, quote, { confirmedCostMicroyuan, confirmedCardUses = 0, userAuthorized }) {
+  submit(request, quote, { confirmedCostMicrocredits, confirmedCostMicroyuan = confirmedCostMicrocredits, confirmedCardUses = 0, userAuthorized }) {
+    if (confirmedCostMicrocredits !== undefined && confirmedCostMicrocredits !== confirmedCostMicroyuan) throw new Error('Conflicting confirmed credit amounts.');
     uuid(request.idempotency_key);
-    if (userAuthorized !== true || request.accepted_policy !== true || !Number.isSafeInteger(confirmedCostMicroyuan) || confirmedCostMicroyuan < 0 || quote.cost !== confirmedCostMicroyuan || quote.currency !== 'CNY' || quote.card_uses !== confirmedCardUses || !quote.quote_token) throw new Error('User authorization and exact quoted payment required.');
+    if (userAuthorized !== true || request.accepted_policy !== true || !Number.isSafeInteger(confirmedCostMicroyuan) || confirmedCostMicroyuan < 0 || quote.cost !== confirmedCostMicroyuan || !['CREDITS','CNY'].includes(quote.currency) || quote.card_uses !== confirmedCardUses || !quote.quote_token) throw new Error('User authorization and exact quoted payment required.');
     return this.request('POST', '/generations', { ...request, quote_token: quote.quote_token });
   }
   async status(id) {
@@ -107,7 +108,7 @@ async function main() {
     } else {
       const saved = JSON.parse(await readFile(filename + '.quote.json', 'utf8'));
       if (saved.base !== client.base || saved.fingerprint !== digest(request)) throw new Error('Request/base changed; get a new quote.');
-      result = await client.submit(request, saved.quote, { confirmedCostMicroyuan: Number(args['confirmed-cost-microyuan']), confirmedCardUses: Number(args['confirmed-card-uses'] || 0), userAuthorized: args['user-authorized'] === true });
+      result = await client.submit(request, saved.quote, { confirmedCostMicrocredits: Number(args['confirmed-cost-microcredits'] ?? args['confirmed-cost-microyuan']), confirmedCardUses: Number(args['confirmed-card-uses'] || 0), userAuthorized: args['user-authorized'] === true });
       await writeFile(filename + '.task.json', JSON.stringify(result, null, 2));
     }
   } else if (action === 'catalog') result = await client.catalog();

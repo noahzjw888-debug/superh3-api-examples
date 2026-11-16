@@ -150,7 +150,7 @@ class Client:
         if payload["accepted_policy"] is not True:
             raise ValueError("Terms and input rights must be accepted before a formal quote.")
         result = self.request("POST", "/quotes", payload)
-        if type(result.get("cost")) is not int or result["cost"] < 0 or result.get("currency") != "CNY" or not result.get("quote_token"):
+        if type(result.get("cost")) is not int or result["cost"] < 0 or result.get("currency") not in ("CREDITS", "CNY") or not result.get("quote_token"):
             raise APIError("invalid_quote", "Incomplete quote; no submission made.")
         return result
 
@@ -158,7 +158,7 @@ class Client:
         validate_payload(payload)
         if payload["accepted_policy"] is not True or type(confirmed_cost) is not int or confirmed_cost < 0:
             raise ValueError("Explicit policy acceptance and exact confirmed cost are required.")
-        if quote.get("currency") != "CNY" or quote.get("cost") != confirmed_cost or quote.get("card_uses") != confirmed_card_uses:
+        if quote.get("currency") not in ("CREDITS", "CNY") or quote.get("cost") != confirmed_cost or quote.get("card_uses") != confirmed_card_uses:
             raise ValueError("Quote differs from confirmed payment. Confirm the new quote before submitting.")
         if not quote.get("quote_token") or quote.get("generation_mode") not in {"live", "simulation", "mixed"}:
             raise ValueError("Quote token or available generation channel missing.")
@@ -254,7 +254,7 @@ def main(argv=None):
         if name == "quote":
             sub.add_argument("--accept-policy", action="store_true")
         if name == "submit":
-            sub.add_argument("--confirmed-cost-microyuan", type=int, required=True)
+            sub.add_argument("--confirmed-cost-microcredits", "--confirmed-cost-microyuan", dest="confirmed_cost_microcredits", type=int, required=True)
             sub.add_argument("--confirmed-card-uses", type=int, choices=[0, 1], default=0)
     subs.add_parser("account")
     subs.add_parser("catalog")
@@ -293,7 +293,7 @@ def main(argv=None):
                 record = json.loads(quote_path.read_text(encoding="utf-8"))
                 if record["base"] != client.base or record["fingerprint"] != fingerprint(payload):
                     raise ValueError("Request or API base changed; obtain and confirm a new quote.")
-                result = client.submit(payload, record["quote"], args.confirmed_cost_microyuan, args.confirmed_card_uses)
+                result = client.submit(payload, record["quote"], args.confirmed_cost_microcredits, args.confirmed_card_uses)
                 save_json(task_path, result)
         elif args.command == "account":
             result = client.request("GET", "/me")

@@ -33,10 +33,10 @@ def tool(name, description, properties, required=(), read_only=True, local_write
 
 TOOLS = [
     tool("service_info", "Read live SuperH3 capabilities, current pay-as-you-go prices and optional prompt-Agent availability. Public, no key, no charge. No fixed completion time is promised.", {}),
-    tool("account", "Read the user's SuperH3 account balance (integer microyuan), membership and concurrency. No charge.", {}),
+    tool("account", "Read the user's SuperH3 account balance (integer microcredits), membership and concurrency. No charge.", {}),
     tool("estimate", "Get a real account-specific SuperH3 price preview BEFORE asking for fee confirmation. No prompt, consent, upload, hold or charge; not a submission token.", {k: REQUEST["properties"][k] for k in ["mode", "resolution", "seconds", "card_id"]}, ["mode", "resolution", "seconds"]),
     tool("quote", "Get formal quote after user accepts terms/input rights. Save request and UUID locally; return request_id, exact cost, card usage, channel. No task or charge. Reuse request_id for retries.", {"request": REQUEST}, ["request"], False, True),
-    tool("submit", "PAID ACTION. Submit an existing saved quote only after the user authorized this request, exact CNY cost and card usage. Reuse request_id on retry. Never create a replacement for submission_unknown. Returns task ID, not a finished video.", {"request_id": UUID, "confirmed_cost_microyuan": INTEGER, "confirmed_card_uses": {"type": "integer", "enum": [0, 1]}, "user_authorized": {"type": "boolean", "const": True}}, ["request_id", "confirmed_cost_microyuan", "confirmed_card_uses", "user_authorized"], False),
+    tool("submit", "PAID ACTION. Submit an existing saved quote only after the user authorized this request, exact credit cost and card usage. Reuse request_id on retry. Never create a replacement for submission_unknown. Returns task ID, not a finished video.", {"request_id": UUID, "confirmed_cost_microcredits": INTEGER, "confirmed_cost_microyuan": {**INTEGER, "description": "Deprecated numeric alias of confirmed_cost_microcredits"}, "confirmed_card_uses": {"type": "integer", "enum": [0, 1]}, "user_authorized": {"type": "boolean", "const": True}}, ["request_id", "confirmed_card_uses", "user_authorized"], False),
     tool("status", "Query original task state. Poll 3–5 seconds; submission_unknown every 15 seconds. completed + result_available is required to download. No new task or charge.", {"task_id": UUID}, ["task_id"]),
     tool("download", "Download an available completed video to the local MCP output directory, without overwriting files. Returns local path, bytes and SHA-256; this is not a public video URL. Does not regenerate.", {"task_id": UUID}, ["task_id"], False, True),
 ]
@@ -94,7 +94,7 @@ class Server:
             return {"brand": "SuperH3", "model": "superh3", "website": "https://superh3.com",
                     "catalog": self.client.request("GET", "/catalog", public=True),
                     "config": self.client.request("GET", "/config", public=True),
-                    "money_unit": "integer microyuan; 1 CNY = 1000000 microyuan; billed per output video second",
+                    "money_unit": "integer microcredits; 1 credit = 1000000 microcredits; billed per output video second",
                     "onboarding": "Register at https://superh3.com, fund your own account, create a personal API Key. Paid hosted service, no model deployment required.",
                     "latency_policy": "Read real stage progress and task timing fields. No fixed completion time is guaranteed; queue/content/load affect actual time.",
                     "pricing_url": "https://superh3.com/pricing", "docs_url": "https://superh3.com/agents/"}
@@ -120,13 +120,15 @@ class Server:
             save_json(path, record)
             return {"request_id": payload["idempotency_key"], **quote, "submitted": False}
         if name == "superh3_submit":
+            if "confirmed_cost_microcredits" in args and "confirmed_cost_microyuan" in args and args["confirmed_cost_microcredits"] != args["confirmed_cost_microyuan"]:
+                raise ValueError("Conflicting confirmed credit amounts.")
             path = self.state_path(args["request_id"])
             record = json.loads(path.read_text(encoding="utf-8"))
             if record["base"] != self.client.base:
                 raise ValueError("API base changed; original quote cannot be submitted here.")
             if record.get("submitted") and record["submitted"].get("data"):
                 return {"data": [self.client.status(record["submitted"]["data"][0]["id"])]}
-            result = self.client.submit(record["request"], record["quote"], args["confirmed_cost_microyuan"], args["confirmed_card_uses"])
+            result = self.client.submit(record["request"], record["quote"], args.get("confirmed_cost_microcredits", args.get("confirmed_cost_microyuan")), args["confirmed_card_uses"])
             record["submitted"] = result
             save_json(path, record)
             return result
