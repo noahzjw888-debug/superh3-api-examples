@@ -1,9 +1,20 @@
-# SuperH3 · MiniMax H3 Ref2VA API
+# SuperH3 多模型 AI 工作台与 API / Multi-model AI Workbench
 
-> Paid hosted reference-guided video generation. Public snapshot: 2026-11-16 Asia/Shanghai. Refresh https://superh3.com/api/v1/config and https://superh3.com/pricing before use.
+<!-- SUPERH3_WORKBENCH -->
+SuperH3 集成聊天、图片、视频和音频模型。网页和 API 共用账户、积分与已有 API Key，各模型的能力、价格和开放状态以实时目录为准。
+
+SuperH3 provides chat, image, video and audio models in one workbench. The website and API share a balance and the same personal API key. Read the live catalogue for model availability, parameters and prices.
+
+[新版工作台 / Workbench](https://superh3.com/portal) · [聊天 / Chat](https://superh3.com/portal?view=chat) · [模型价格 / Model pricing](https://superh3.com/portal?view=prices) · [开放 API / Open API](https://superh3.com/portal?view=api) · [充值 / Add credits](https://superh3.com/portal?recharge=1)
+
+- Live models, fields and prices: https://superh3.com/api/v1/products
+- Multi-model jobs: /api/v1/product-tasks/quote → /api/v1/product-tasks → /api/v1/product-tasks/{id}.
+<!-- /SUPERH3_WORKBENCH -->
+
+> Paid hosted reference-guided video generation. Public snapshot: 2026-11-16 Asia/Shanghai. Refresh https://superh3.com/api/v1/config and https://superh3.com/portal?view=prices before use.
 
 - Website/API use the same personal account, key, balance and concurrency. Register, recharge (CNY via Alipay (minimum 5) or USD via PayPal (read live minimum/conversion)) and create your own key. No monthly subscription; paid recharge balance does not expire.
-- Current video: Ref2VA only, 1–9 images plus at most 3 audio clips (2s minimum each; 15s combined), no video references. Single images are references, not fixed first frames. No text-only or first/last-frame control.
+- MiniMax H3 video API: Ref2VA only, 1–9 images plus at most 3 audio clips (2s minimum each; 15s combined), no video references. Single images are references, not fixed first frames. No text-only or first/last-frame control.
 - Current quality: 768P 0.05 credits/output second; 1080P 0.10 credits/output second (AI upscaled). 480P unavailable. 4–15 whole seconds; six aspect ratios. Every registered user supports 100 concurrent videos; excess accepted tasks queue.
 - Batch short-drama shots: 100 fifteen-second outputs total 25 minutes of footage. Up to 100x theoretical parallel throughput assumes independent similarly timed tasks and available capacity; it is not a measured completion time or a finished edited drama.
 - Output duration is not processing latency. No current fixed completion-time benchmark is published. Read actual status; never infer progress from elapsed time.
@@ -15,8 +26,8 @@
 中文：全能参考；768P每秒0.05积分，1080P每秒0.10积分；每位注册用户均支持100条视频并发，满额排队。100个15秒镜头合计25分钟素材；理论并行效率最高100倍，实际取决于排队与任务耗时，不保证几分钟交付完整短剧。AI帮写每次0.03积分，默认关闭，明确授权才调用；需按绑定顺序传入1–9张已上传参考图。每账号1条未完成，全站16并发。价格和能力以实时配置与报价为准。
 
 ## Authoritative links
-- [Pricing](https://superh3.com/pricing)
-- [Developer API](https://superh3.com/developers)
+- [Pricing](https://superh3.com/portal?view=prices)
+- [Developer API](https://superh3.com/portal?view=api)
 - [Agent instructions](https://superh3.com/agents/FOR_AI.md)
 - [OpenAPI](https://superh3.com/agents/openapi.json)
 - [Live service facts](https://superh3.com/agents/service-info.json)

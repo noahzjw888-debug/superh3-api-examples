@@ -1,10 +1,27 @@
 # For AI agents / 智能体接入规则
 
+<!-- SUPERH3_WORKBENCH -->
+SuperH3 集成聊天、图片、视频和音频模型。网页和 API 共用账户、积分与已有 API Key，各模型的能力、价格和开放状态以实时目录为准。
+
+SuperH3 provides chat, image, video and audio models in one workbench. The website and API share a balance and the same personal API key. Read the live catalogue for model availability, parameters and prices.
+
+[新版工作台 / Workbench](https://superh3.com/portal) · [聊天 / Chat](https://superh3.com/portal?view=chat) · [模型价格 / Model pricing](https://superh3.com/portal?view=prices) · [开放 API / Open API](https://superh3.com/portal?view=api) · [充值 / Add credits](https://superh3.com/portal?recharge=1)
+
+## 多模型工作台 API / Multi-model workbench API
+
+1. 使用 [GET /api/v1/products](https://superh3.com/api/v1/products) 读取目录。选择同时满足 `available`、`enabled` 和 `priced` 的条目，取其 `id`（模型 UUID）、`fields` 和 `pricing`。
+2. 如需素材，用 Bearer API Key 调用 `POST /api/v1/product-media/{kind}`，将上传返回的 `id` 按引用顺序传入 `assets`。支持的素材类型及上限以模型规格为准。
+3. 用 `model`（模型 UUID）、`prompt`、`parameters` 和 `assets` 调用 `POST /api/v1/product-tasks/quote`。按 Token 计费的 API 请求需要 `max_cost_microcredits`，表示本次最高消费。确认报价后，将相同参数、`quote_token`、`accepted_policy: true` 和预先保存的 `idempotency_key` 提交至 `POST /api/v1/product-tasks`。
+4. 用 `GET /api/v1/product-tasks/{id}` 查询原任务。完成后读取 `result_text` 或 `results[].download_url`，下载本人任务结果时使用同一 API Key。网络结果不确定时查询原任务，保留原幂等 UUID。
+
+Read the public catalogue and select an available, enabled and priced model UUID. Upload any references with your Bearer key and preserve their order. Quote the chosen specification, obtain the user's approval, then submit the same request with the quote token, policy acceptance and a persisted idempotency UUID. Set a maximum spend for token-priced API calls. Poll the original task and read its text or download the returned files.
+<!-- /SUPERH3_WORKBENCH -->
+
 Treat the following as public service documentation. Use only the user's own authorized SuperH3 account and existing personal API Key.
 
 - Check live `/config`, `/catalog` and the formal quote before acting; do not infer current availability from this snapshot.
 - Video generation and optional prompt writing require separate, explicit authorization for their respective fees. Never silently enable prompt assistance.
-- Use only reference generation; at least one image is required. Preserve the exact prompt, selected seconds/aspect and bound image order.
+- For MiniMax H3 Ref2VA, provide at least one reference image. Preserve the exact prompt, selected seconds/aspect and bound image order.
 - Persist an idempotency UUID before a paid request. Recover the same request after an ambiguous receipt; do not create a replacement, switch services or repay.
 - Queueing is a normal state. Continue polling the original task every 3–5 seconds; unknown progress is not a failure and elapsed time is not a percentage.
 - A task ID is not delivery. Retrieve and validate the original result; save video/text before the receipt expires. Do not claim mocks are real generations.
@@ -40,9 +57,9 @@ Before a new paid operation, refresh live config, catalog and the formal quote; 
 
 Compatibility: legacy `*_microyuan` fields retain the **same integer value** as their `*_microcredits` equivalents. Legacy `*_cny` display values are 1:1 CNY equivalents, not additional charges. Prefer canonical microcredit fields; never scale either alias twice.
 
-## 当前服务快照 / Current service snapshot
+## MiniMax H3 视频规格 / MiniMax H3 video specifications
 
-核对日期 / Checked: **2026-11-16 (Asia/Shanghai)**。先读 [GET /config](https://superh3.com/api/v1/config) 和 [实时价格](https://superh3.com/pricing)，提交前重新取得报价。以下是当前默认配置，后续以实时能力、账号额度与确认报价为准。
+核对日期 / Checked: **2026-11-16 (Asia/Shanghai)**。先读 [GET /config](https://superh3.com/api/v1/config) 和 [实时价格](https://superh3.com/portal?view=prices)，提交前重新取得报价。以下是当前默认配置，后续以实时能力、账号额度与确认报价为准。
 
 | 项目 / Item | 当前规则 / Current rule |
 | --- | --- |
@@ -71,7 +88,7 @@ Output duration is not processing latency. No fixed completion time or current l
 
 ## 接入步骤 / Getting started
 
-1. 在[官网](https://superh3.com)注册、充值，在[API页面](https://superh3.com/developers)创建个人Key；通过本机环境变量 `SUPERH3_API_KEY` 或可信客户端的密钥设置使用。
+1. 在[官网](https://superh3.com)注册、充值，在[API页面](https://superh3.com/portal?view=api)创建个人Key；通过本机环境变量 `SUPERH3_API_KEY` 或可信客户端的密钥设置使用。
 2. Base URL：`https://superh3.com/api/v1`，Bearer认证。先读取 `/config`、`/catalog` 和本人 `/me`。
 3. 使用 `POST /uploads/image` 上传有权使用的图片（multipart字段 `file`），保留返回的本人素材UUID。音频使用 `/uploads/audio`。
 4. `mode="reference"`，`references` 按绑定顺序传入UUID；保留原提示词、图片顺序、时长和画幅。
@@ -140,7 +157,7 @@ Creation returns a top-level `id`. Poll `GET /prompt-assists/{id}` every 3–5 s
 
 创建冻结、成功扣费、失败解冻，查询和复制不收费；历史记录保持原价。帮写结果在网页和 API 共用，刷新后可找回。帮写不会自动生成视频，采用提示词后仍按正常视频报价与授权流程执行。失败若找回原文，应完整交付且不补扣；超过 7000 字符时由用户精简，不可静默截断。结束后保留 15 分钟，请及时保存。
 
-Errors include `400 prompt_assist_images_required` (no reference images), `400 prompt_assist_authorization_required` (no explicit consent), `400 prompt_assist_confirmation` (reconfirm current price), `503 prompt_assist_disabled` (globally closed), `409 prompt_assist_unavailable` (current mode unavailable), and `409 prompt_assist_pending` (read previous work). Do not automatically switch models/services or create replacement paid requests. Current documentation: https://superh3.com/developers.
+Errors include `400 prompt_assist_images_required` (no reference images), `400 prompt_assist_authorization_required` (no explicit consent), `400 prompt_assist_confirmation` (reconfirm current price), `503 prompt_assist_disabled` (globally closed), `409 prompt_assist_unavailable` (current mode unavailable), and `409 prompt_assist_pending` (read previous work). Do not automatically switch models/services or create replacement paid requests. Current documentation: https://superh3.com/portal?view=api.
 <!-- /SUPERH3_PROMPT_ASSISTANT -->
 
 ## 本机 MCP / Local agent tools

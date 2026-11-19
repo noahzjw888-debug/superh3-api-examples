@@ -80,8 +80,8 @@
       "version": 4
     }
   ],
-  "description_en": "Only all-in-one reference mode (Ref2VA) is available: 1–9 images and up to 3 optional audio clips totaling at most 15 seconds. No video references. Choose 768P or 1080P, six aspect ratios and 4–15 whole seconds on both web and API. Read the effective account concurrency from GET /config generation_constraints.concurrency; confirm the live quote. Text-only and first/last-frame modes are reserved and unavailable. Tasks report actual status; unavailable progress and timings remain null.",
-  "description_zh": "当前仅开放全能参考（Ref2VA）：1–9 张图片，可附加最多 3 段音频，音频合计不超过 15 秒；不支持视频参考。768P、1080P，6 种画幅，网页与 API 均为 4–15 秒整数。每账号并发以 GET /config 的 generation_constraints.concurrency 为准；价格以实时确认报价为准。文生与首尾帧模式已预留，尚未开放。任务显示实际状态，未提供的进度和耗时为 null，不编造百分比。",
+  "description_en": "SuperH3 provides chat, image, video and audio models in one workbench. The website and API share a balance and the same personal API key. Read the live catalogue for model availability, parameters and prices.",
+  "description_zh": "SuperH3 集成聊天、图片、视频和音频模型。网页和 API 共用账户、积分与已有 API Key，各模型的能力、价格和开放状态以实时目录为准。",
   "getting_started": [
     "Register at https://superh3.com",
     "Recharge credits at https://superh3.com/pricing; CNY via Alipay (minimum 5), USD via PayPal (read live conversion and minimum)",
@@ -97,12 +97,16 @@
   ],
   "links": {
     "agent_kit": "https://superh3.com/agents/",
-    "developers": "https://superh3.com/developers",
+    "developers": "https://superh3.com/portal?view=api",
     "github": "https://github.com/noahzjw888-debug/superh3-api-examples",
     "hugging_face": "https://huggingface.co/spaces/Noahjson/SuperH3-MiniMax-H3-API",
     "llms": "https://superh3.com/llms.txt",
-    "pricing": "https://superh3.com/pricing",
-    "terms": "https://superh3.com/terms"
+    "pricing": "https://superh3.com/portal?view=prices",
+    "terms": "https://superh3.com/terms",
+    "workbench": "https://superh3.com/portal",
+    "chat": "https://superh3.com/portal?view=chat",
+    "recharge": "https://superh3.com/portal?recharge=1",
+    "public_api_docs": "https://superh3.com/developers"
   },
   "live_price_source": "https://superh3.com/api/v1/catalog",
   "mcp": {
@@ -213,5 +217,22 @@
     "legacy_microyuan_alias": "identical integer value; never convert twice",
     "existing_orders_and_tasks": "preserve locked amounts; do not recreate"
   },
-  "search_intents": []
+  "search_intents": [],
+  "product_workbench": {
+    "output_types": [
+      "text",
+      "image",
+      "video",
+      "audio"
+    ],
+    "same_api_key": true,
+    "config_url": "https://superh3.com/api/v1/config",
+    "catalog_url": "https://superh3.com/api/v1/products",
+    "asset_upload_path": "/api/v1/product-media/{kind}",
+    "quote_path": "/api/v1/product-tasks/quote",
+    "create_path": "/api/v1/product-tasks",
+    "status_path": "/api/v1/product-tasks/{id}",
+    "billing_unit": "microcredits",
+    "idempotency_required": true
+  }
 }

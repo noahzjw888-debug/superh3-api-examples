@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "SuperH3 Video API",
+    "title": "SuperH3 Multi-model Workbench API",
     "version": "2.4.0",
-    "description": "Public SuperH3 video and optional H3 Ref2VA prompt-Agent API. Consumption currency=CREDITS, unit=microcredits; 1 credit=1000000 microcredits. Recharge CNY 1=1 credit; USD conversion is billing.credits_per_usd_micros/1000000 in GET /config. Refresh live config, catalog and the formal quote before every new paid operation. Legacy microyuan fields are identical integer aliases, not another currency. Prompt assistance is off by default and requires separate explicit paid consent. Ref2VA reference generation only; read live capabilities and owned task receipts."
+    "description": "Chat, image, video and audio models share one account and API key. Public SuperH3 video and optional H3 Ref2VA prompt-Agent API. Consumption currency=CREDITS, unit=microcredits; 1 credit=1000000 microcredits. Recharge CNY 1=1 credit; USD conversion is billing.credits_per_usd_micros/1000000 in GET /config. Refresh live config, catalog and the formal quote before every new paid operation. Legacy microyuan fields are identical integer aliases, not another currency. Prompt assistance is off by default and requires separate explicit paid consent. Ref2VA reference generation only; read live capabilities and owned task receipts."
   },
   "servers": [
     {
@@ -193,6 +193,180 @@
             "type": "integer",
             "example": 6700000,
             "description": "Live recharge ratio multiplied by 1000000. 6700000 means USD 1 buys 6.7 credits. Not the unit of consumption prices."
+          }
+        }
+      },
+      "WorkbenchQuoteRequest": {
+        "type": "object",
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Product UUID returned by GET /products."
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "generate",
+              "edit"
+            ]
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Use fields supported by the selected model and operation."
+          },
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Owned asset UUIDs in reference order."
+          },
+          "note": {
+            "type": "string"
+          },
+          "max_cost_microcredits": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Required and positive for token-priced model requests."
+          }
+        }
+      },
+      "WorkbenchTaskRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "quote_token",
+          "idempotency_key",
+          "accepted_policy"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Product UUID returned by GET /products."
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "generate",
+              "edit"
+            ]
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Use fields supported by the selected model and operation."
+          },
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Owned asset UUIDs in reference order."
+          },
+          "note": {
+            "type": "string"
+          },
+          "max_cost_microcredits": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Required and positive for token-priced model requests."
+          },
+          "quote_token": {
+            "type": "string"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "accepted_policy": {
+            "type": "boolean",
+            "const": true
+          }
+        }
+      },
+      "WorkbenchTask": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "product_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "model_name": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "cost": {
+            "type": "integer",
+            "description": "Cost quoted in microcredits."
+          },
+          "charged": {
+            "type": "integer",
+            "description": "Amount charged in microcredits."
+          },
+          "result_text": {
+            "type": "string"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "download_url": {
+                  "type": "string"
+                },
+                "expires_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        }
+      },
+      "WorkbenchQuote": {
+        "type": "object",
+        "properties": {
+          "cost": {
+            "type": "integer",
+            "description": "Quoted microcredits or spend ceiling."
+          },
+          "quote_token": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "is_spend_limit": {
+            "type": "boolean"
+          },
+          "video_price": {
+            "type": "object"
           }
         }
       }
@@ -1307,6 +1481,222 @@
           },
           "default": {
             "description": "No automatic paid retry: 400 consent/price, 401 authentication, 409 unavailable/pending, 503 globally disabled, 410 expired, 404 inaccessible"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/products": {
+      "get": {
+        "summary": "List workbench models, specifications and retail prices",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "output_type": {
+                            "type": "string",
+                            "enum": [
+                              "text",
+                              "image",
+                              "video",
+                              "audio"
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "available": {
+                            "type": "boolean"
+                          },
+                          "priced": {
+                            "type": "boolean"
+                          },
+                          "fields": {
+                            "type": "object"
+                          },
+                          "pricing": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    },
+                    "same_api_key": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error"
+          }
+        },
+        "security": []
+      }
+    },
+    "/product-media/{kind}": {
+      "post": {
+        "summary": "Upload an owned workbench reference asset",
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "image",
+                "video",
+                "audio"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product-tasks/quote": {
+      "post": {
+        "summary": "Get a quote before confirming charges",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkbenchQuote"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkbenchQuoteRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product-tasks": {
+      "post": {
+        "summary": "Submit a confirmed workbench task",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkbenchTask"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkbenchTaskRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product-tasks/{id}": {
+      "get": {
+        "summary": "Read an owned workbench task",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkbenchTask"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error"
           }
         },
         "parameters": [
