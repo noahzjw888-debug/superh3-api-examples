@@ -125,12 +125,13 @@ The Agent writes video prompts from natural-language ideas and all bound images,
 
 Each account may have one unfinished assistance request, including queued work; wait for its terminal result before creating another. All accounts share 16 processing slots across worker processes. Further requests from other accounts remain `queued` and start in submission order when a slot is free. Website sessions and all personal API keys share these limits. Poll the original receipt; queueing holds the confirmed fee, success captures it, failure releases it.
 
-1. Read `GET /config`: check `prompt_assistant.enabled`, `price_microcredits`, and `generation_constraints.version`. A global admin switch applies to all accounts, the website and existing API keys. Closed means no new assistance; accepted work/results remain accessible. / 全站关闭后不接受新帮写，已提交任务继续处理，历史结果仍可查看。
-2. After authorization, upload needed owned images using `POST /uploads/image` (multipart `file`) and keep their UUIDs. Pass 0–9 images in binding order; only images are accepted here. `prompt` is 1–7000 characters; `seconds` is the user's selected integer duration, 4–15; use a supported `aspect`. / 参考图按绑定顺序传入，Agent 自动看图；时长采用用户当前选择，不擅自修改。
-3. Persist a unique UUID before `POST /prompt-assists`. Example only; never execute without the user's specific authorization:
+1. Read `GET /config` for `prompt_assistant.enabled`, `min_images`, `max_images`, `price_microcredits`, and `generation_constraints.version`. A global admin switch applies to all accounts, the website and existing API keys. Closed means no new assistance; accepted work/results remain accessible. / 全站关闭后不接受新帮写，已提交任务继续处理，历史结果仍可查看。
+2. 使用 `POST /uploads/image`（multipart 字段 `file`）上传有权使用的参考图。帮写需要 **1–9 张参考图**。将上传响应中的 `id`（UUID）按用户绑定顺序填入 `images`。即使创作描述未写图片标签，助手也会查看全部绑定图片。`prompt` 为 1–7000 字符，`seconds` 为用户选择的 4–15 秒整数，`aspect` 使用支持的画幅。
+   Upload reference images with `POST /uploads/image` (multipart field `file`). Prompt assistance requires **1–9 images**. Put each returned `id` (UUID) in `images` in the user's binding order. The assistant reads every bound image, even when the prompt omits image labels. Use a 1–7000 character `prompt`, the user's selected whole `seconds` (4–15), and a supported `aspect`.
+3. 取得本次帮写授权后再调用 `POST /prompt-assists`。先保存新的幂等 UUID，并将示例中的图片 UUID 替换为上传返回的 `id`。 / Obtain consent for this request and persist a new idempotency UUID before calling `POST /prompt-assists`. Replace the sample image UUID with the `id` from your upload.
 
 ```json
-{"prompt":"用户的创作想法","images":[],"seconds":10,"aspect":"16:9","idempotency_key":"SAVE_A_NEW_UUID_BEFORE_SUBMITTING","configuration_version":"FROM_GET_CONFIG","accepted_price":30000,"user_authorized":true}
+{"prompt":"用户的创作想法","images":["b3c61f6c-9c5a-4221-8f7f-5da869d0a05d"],"seconds":10,"aspect":"16:9","idempotency_key":"SAVE_A_NEW_UUID_BEFORE_SUBMITTING","configuration_version":"FROM_GET_CONFIG","accepted_price":30000,"user_authorized":true}
 ```
 
 Creation returns a top-level `id`. Poll `GET /prompt-assists/{id}` every 3–5 seconds; read top-level `state`, `text`, `cost`, `charged`, `message`, `expires_at`. States: `queued`, `running`, `completed`, `failed`. Creation holds the confirmed price, success captures it once, failure releases it. Old receipts retain their original price. An identical retry must use the same UUID and full parameters. Never replace an ambiguous request with a new paid one.
@@ -141,7 +142,7 @@ Creation returns a top-level `id`. Poll `GET /prompt-assists/{id}` every 3–5 s
 
 创建冻结、成功扣费、失败解冻，查询和复制不收费；历史记录保持原价。帮写结果在网页和 API 共用，刷新后可找回。帮写不会自动生成视频，采用提示词后仍按正常视频报价与授权流程执行。失败若找回原文，应完整交付且不补扣；超过 7000 字符时由用户精简，不可静默截断。结束后保留 15 分钟，请及时保存。
 
-Errors: `400 prompt_assist_authorization_required` (no explicit consent), `400 prompt_assist_confirmation` (reconfirm current price), `503 prompt_assist_disabled` (globally closed), `409 prompt_assist_unavailable` (current mode unavailable), `409 prompt_assist_pending` (read previous work). Do not automatically switch models/services or create replacement paid requests. Current documentation: https://superh3.com/developers.
+Errors include `400 prompt_assist_images_required` (no reference images), `400 prompt_assist_authorization_required` (no explicit consent), `400 prompt_assist_confirmation` (reconfirm current price), `503 prompt_assist_disabled` (globally closed), `409 prompt_assist_unavailable` (current mode unavailable), and `409 prompt_assist_pending` (read previous work). Do not automatically switch models/services or create replacement paid requests. Current documentation: https://superh3.com/developers.
 <!-- /SUPERH3_PROMPT_ASSISTANT -->
 
 ## 样片、证据与维护 / Samples and maintenance

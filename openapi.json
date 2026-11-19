@@ -50,7 +50,8 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Owned image UUIDs in binding order; the Agent reads all images even without labels."
+            "description": "1–9 owned reference images. Use each id returned by POST /uploads/image in the user’s binding order.",
+            "minItems": 1
           },
           "seconds": {
             "type": "integer",

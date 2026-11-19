@@ -172,7 +172,9 @@
     "billing_unit": "request",
     "create_path": "/prompt-assists",
     "status_path": "/prompt-assists/{id}",
-    "automatic_video_generation": false
+    "automatic_video_generation": false,
+    "min_images": 1,
+    "requires_prompt": true
   },
   "recharge": {
     "credits_per_cny": 1,

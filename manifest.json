@@ -4,23 +4,23 @@
   "hash_algorithm": "sha256",
   "files": {
     "BENCHMARKS.md": "cde2fcb93647a3e1f939696f5513a70b9c9a30f86309cbb65aae8fb34dc939b3",
-    "FOR_AI.md": "68b1d2b94a8d9a27de2c4b0baf325daa72978a6f68fe0c25e2c37beb21d4cda3",
+    "FOR_AI.md": "a5c485011dfe7911d3ae68ee53ca18b28d04a9e6bbef6974dae743ec134889ab",
     "LICENSE": "c8d33030a755dea34495e15cbc6cfedd3ee3b9fae5158ab2b0a742b4ba62f778",
-    "README.md": "ef6b27838330609d34579908d7da9e0a1dca680ac070c75c69177d6d2e43efc4",
+    "README.md": "609527cfe352a49d247cbbca687f69a0f65b382e2c8243200efaa3b3d5b2a3ca",
     "agent.css": "38d7771f5b52db4bf506e4bc74731f4a34e4f0bcf0c9f0145cc6b4496fa3dbb9",
     "index.html": "fc21edd01f3e900ef26a79e9878a7712f7a972d7ef695604f09d99f8862d4f5f",
-    "llms-full.txt": "3d3a1f928749f502b47cdc7019024c5ffc2e8139e513eb2fe9375e230d40fb5a",
-    "llms.txt": "477d9a12006dfb84bd2920d015922bfe8bd687451c1bf56d7c1801cf3ffec98e",
+    "llms-full.txt": "7f5330d5bc8f306c9b216ae1c0c0e921a338233d9bb1dea64c4b33e11def2106",
+    "llms.txt": "53294ee593b3e72196c170a87620a4592c38012603c7d76177d4ea48c2101d8f",
     "mcp-config.example.json": "3cf06729e28746374941cb4bcff4a7d2f296891d0d617584a05f32920d1157da",
     "mcp-tools.json": "3fd1deea4c4629544e0a28cd8ca5c4540f1e06cbd43b5e459b3375260ec0ff37",
-    "openapi.json": "7a8227d699bb3ae5e29916bb699d0325c531ffdd71bc4b76a003966ebc26b5f2",
+    "openapi.json": "abd72eb9edeb4e9b500f6dcb84cf689577cf5c81f62adfd2c4fb9b1fa8d07ece",
     "samples.json": "0f86baf9e55260e70d31d09295b581ed465c1713b0f84e4594a19ed2c84de2d1",
-    "service-info.json": "36ec935c27a4b008bf5d5d3fe48c8f2f50d80ea7e1c1a3d9f2228c69d1209c8d",
+    "service-info.json": "23e59e94df78e6a11592e3899f807e3740f9e58c5271099242e29c2659e429f1",
     "superh3.mjs": "ddb2d9c1c5db05e369544331426b6d778635a97745ff86a009a9356cac7e6d33",
     "superh3.ps1": "42a340c26ea3ee5aa83485d6019eabeb3d8ff215f1d58553c324209e5825f3af",
     "superh3.py": "3b3a694ce45afd6750a11759baadeea913ac353470b1a7938f35186d89e1988f",
     "superh3_mcp.py": "c296db17f06e28797c4d27dbc1340249bb3318282259ab00f8dbaca7cc9b8277",
     "test_agent_kit.py": "84a961a1933076e69df71cab5be2d9d39ff7a7da1297f257428c0deda5737a49",
-    "superh3-agent-kit.zip": "9d59add3d617d4456d9450f5a64514eef686e5b5e22a3540f99300354270c9aa"
+    "superh3-agent-kit.zip": "d30cc5ea50cdf9cc1959d1980c96218f7273194d2ef4b484dfbb2325492a98e0"
   }
 }

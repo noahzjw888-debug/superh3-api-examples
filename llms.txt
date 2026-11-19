@@ -8,11 +8,11 @@
 - Batch short-drama shots: 100 fifteen-second outputs total 25 minutes of footage. Up to 100x theoretical parallel throughput assumes independent similarly timed tasks and available capacity; it is not a measured completion time or a finished edited drama.
 - Output duration is not processing latency. No current fixed completion-time benchmark is published. Read actual status; never infer progress from elapsed time.
 - Hold the confirmed fee at submission, settle on success, release on confirmed failure. Persist idempotency and resume the original task if uncertain.
-- Optional H3 Ref2VA 提示词助手: 0.03 credits/request, same API Key; off by default, explicit user_authorized:true and accepted_price:30000 required. One unfinished request per account, sixteen global running, overflow queues. It reads all bound pictures and selected duration and never starts a video.
+- Optional H3 Ref2VA 提示词助手: 0.03 credits/request, same API Key; off by default, explicit user_authorized:true and accepted_price:30000 required. One unfinished request per account, sixteen global running, overflow queues. Pass 1–9 uploaded image IDs in binding order. The assistant uses the selected duration and never starts a video.
 - Save completed video/text within the receipt's 15-minute retention period. Querying/copying is free.
 - API base: https://superh3.com/api/v1 ; public model: superh3. Python/Node/PowerShell clients and seven local stdio MCP tools; no hosted MCP URL.
 
-中文：全能参考；768P每秒0.05积分，1080P每秒0.10积分；每位注册用户均支持100条视频并发，满额排队。100个15秒镜头合计25分钟素材；理论并行效率最高100倍，实际取决于排队与任务耗时，不保证几分钟交付完整短剧。AI帮写每次0.03积分，默认关闭，明确授权才调用；每账号1条未完成，全站16并发。价格和能力以实时配置与报价为准。
+中文：全能参考；768P每秒0.05积分，1080P每秒0.10积分；每位注册用户均支持100条视频并发，满额排队。100个15秒镜头合计25分钟素材；理论并行效率最高100倍，实际取决于排队与任务耗时，不保证几分钟交付完整短剧。AI帮写每次0.03积分，默认关闭，明确授权才调用；需按绑定顺序传入1–9张已上传参考图。每账号1条未完成，全站16并发。价格和能力以实时配置与报价为准。
 
 ## Authoritative links
 - [Pricing](https://superh3.com/pricing)
